@@ -6,19 +6,25 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Header = () => {
+  // 로그아웃
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/signin";
+  };
+
   return (
     <HeaderWrapper>
       <h1>Camp-Fire</h1>
       <LoginStatus>
         <span>호스트님이 로그인 중입니다.</span>
-        <Button size="small" className="logout">
+        <Button size="small" className="logout" onClick={logout}>
           로그아웃
         </Button>
       </LoginStatus>
       <MenuList>
         <MenuItem>
           <ListItemText>
-            <Link to="/">예약관리 </Link>
+            <Link to="/reserve-manage">예약관리 </Link>
           </ListItemText>
         </MenuItem>
         <MenuItem>

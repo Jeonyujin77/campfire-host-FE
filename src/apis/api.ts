@@ -21,4 +21,15 @@ api.interceptors.request.use(function (config: any) {
   return config;
 });
 
+api.interceptors.response.use(function (config: any) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  if (!accessToken) {
+    const newAccessToken = config.headers.accesstoken;
+    localStorage.setItem("accessToken", newAccessToken);
+  }
+
+  return config;
+});
+
 export default api;

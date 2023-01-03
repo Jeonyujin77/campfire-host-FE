@@ -1,12 +1,10 @@
-import React from "react";
-import Layout from "../components/layout/Layout";
+import ReserveManange from "./ReserveManange";
+import Signin from "./Signin";
 
 const Main = () => {
-  return (
-    <Layout>
-      <h2>⛺예약관리</h2>
-    </Layout>
-  );
+  const loginStatus = localStorage.getItem("refreshToken");
+
+  return !loginStatus ? <Signin /> : <ReserveManange />;
 };
 
 export default Main;

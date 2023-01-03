@@ -10,6 +10,12 @@ interface HostInfo {
   profileImg?: string;
 }
 
+// 호스트 로그인 정보
+interface HostLogin {
+  email: string;
+  password: string;
+}
+
 // 이메일 중복확인
 export const __checkEmailDup = createAsyncThunk(
   "checkEmailDup",
@@ -54,6 +60,35 @@ export const __signup = createAsyncThunk(
       profileImg: profileImg !== "" ? profileImg : null,
     });
     if (response.status === 201) {
+      return thunkAPI.fulfillWithValue(response.data);
+    } else {
+      console.log(response.data);
+      return thunkAPI.rejectWithValue(response.data);
+    }
+  }
+);
+
+// 로그인
+export const __signin = createAsyncThunk(
+  "signin",
+  async (payload: HostLogin, thunkAPI) => {
+    const { email, password } = payload;
+
+    const response = await api.post("/api/hosts/login", {
+      email,
+      password,
+    });
+
+    if (response.status === 200) {
+      const { accesstoken, refreshtoken } = response.headers;
+      const { hostId } = response.data;
+
+      if (accesstoken && refreshtoken && hostId) {
+        localStorage.setItem("accessToken", accesstoken);
+        localStorage.setItem("refreshToken", refreshtoken);
+        localStorage.setItem("hostId", hostId);
+      }
+
       return thunkAPI.fulfillWithValue(response.data);
     } else {
       console.log(response.data);
