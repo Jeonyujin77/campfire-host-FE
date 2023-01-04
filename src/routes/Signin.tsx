@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import styled from "@emotion/styled";
+import { Button, Paper } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { __signin } from "../apis/hostApi";
+import Input from "../components/common/Input";
 import useInput from "../hooks/useInput";
 import { useAppDispatch } from "../redux/store";
 
@@ -25,17 +28,71 @@ const Signin = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input type="text" required value={email} onChange={emailHandler} />
-      <input
-        type="password"
-        required
-        value={password}
-        onChange={passwordHandler}
-      />
-      <button type="submit">로그인</button>
-    </form>
+    <SigninWrapper>
+      <SigninHeader>Camp-Fire</SigninHeader>
+      <Paper style={{ padding: "20px 0" }}>
+        <SigninForm onSubmit={onSubmit}>
+          <FormGrp>
+            <label>이메일</label>
+            <Input
+              type="email"
+              width="390px"
+              required
+              value={email}
+              onChange={emailHandler}
+            />
+          </FormGrp>
+          <FormGrp>
+            <label>비밀번호</label>
+            <Input
+              type="password"
+              width="390px"
+              required
+              value={password}
+              onChange={passwordHandler}
+            />
+          </FormGrp>
+
+          <Button variant="contained" type="submit" className="signinBtn">
+            로그인
+          </Button>
+        </SigninForm>
+      </Paper>
+    </SigninWrapper>
   );
 };
+
+const SigninWrapper = styled.div`
+  width: 460px;
+  margin: 0 auto;
+`;
+
+const SigninHeader = styled.div`
+  padding: 60px 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px;
+  color: #ff7a50;
+`;
+
+const SigninForm = styled.form`
+  width: 400px;
+  margin: 30px auto;
+  text-align: center;
+  .signinBtn {
+    margin-top: 40px;
+    background-color: #ff7a50;
+  }
+`;
+
+const FormGrp = styled.div`
+  margin-bottom: 25px;
+  label {
+    display: block;
+    text-align: left;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+`;
 
 export default Signin;
