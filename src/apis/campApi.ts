@@ -22,3 +22,19 @@ export const __registCampsInfo = createAsyncThunk(
     }
   }
 );
+
+// 캠핑장 상세 조회
+export const __getCampsInfo = createAsyncThunk(
+  "getCampsInfo",
+  async (payload: string, thunkAPI) => {
+    try {
+      const response = await api.get(`/api/camps/${payload}`);
+
+      if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);

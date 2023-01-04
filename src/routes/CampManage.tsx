@@ -64,9 +64,6 @@ const CampManage = () => {
               <li>
                 <Link to="/camps/16">캠핑장1</Link>
               </li>
-              <li>
-                <Link to="/camps/15">캠핑장2</Link>
-              </li>
             </ul>
           </TabPanel>
           <TabPanel value={value} index={1}>
