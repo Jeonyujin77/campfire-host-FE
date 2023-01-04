@@ -34,6 +34,11 @@ const Header = () => {
         </MenuItem>
         <MenuItem>
           <ListItemText>
+            <Link to="/site-manage">사이트관리 </Link>
+          </ListItemText>
+        </MenuItem>
+        <MenuItem>
+          <ListItemText>
             <Link to="/hostpage">호스트페이지 </Link>
           </ListItemText>
         </MenuItem>

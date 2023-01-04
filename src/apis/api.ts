@@ -14,8 +14,8 @@ api.interceptors.request.use(function (config: any) {
   const refreshToken = localStorage.getItem("refreshToken");
 
   if (config.headers) {
-    config.headers.access = `${accessToken}`;
-    config.headers.refresh = `${refreshToken}`;
+    config.headers.accesstoken = `${accessToken}`;
+    config.headers.refreshtoken = `${refreshToken}`;
   }
 
   return config;
