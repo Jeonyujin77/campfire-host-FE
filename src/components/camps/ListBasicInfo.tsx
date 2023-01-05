@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { CampInfoProps } from "../../interfaces/Camps";
 
-const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps | null }) => {
-  return campInfo !== null ? (
+const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
+  return (
     <div>
       <Row>
         <Label htmlFor="camp-name">업체명</Label>
@@ -57,8 +57,6 @@ const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps | null }) => {
         </Data>
       </Row>
     </div>
-  ) : (
-    <>정보를 찾을 수 없습니다.</>
   );
 };
 

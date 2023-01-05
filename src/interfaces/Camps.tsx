@@ -13,3 +13,9 @@ export interface CampInfoProps {
   createdAt: string; // 생성시간
   updatedAt: string; // 수정시간
 }
+
+// 캠핑장 기본정보 수정
+export interface CampModifyInfo {
+  formData: FormData;
+  campId: number;
+}

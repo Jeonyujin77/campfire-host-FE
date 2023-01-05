@@ -13,7 +13,7 @@ api.interceptors.request.use(function (config: any) {
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
 
-  if (config.headers) {
+  if (config.headers && accessToken && refreshToken) {
     config.headers.accesstoken = `${accessToken}`;
     config.headers.refreshtoken = `${refreshToken}`;
   }

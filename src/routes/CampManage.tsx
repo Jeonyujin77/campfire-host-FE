@@ -62,6 +62,9 @@ const CampManage = () => {
           <TabPanel value={value} index={0}>
             <ul>
               <li>
+                <Link to="/camps/18">캠핑장2</Link>
+              </li>
+              <li>
                 <Link to="/camps/16">캠핑장1</Link>
               </li>
             </ul>
