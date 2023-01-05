@@ -102,3 +102,19 @@ export const onUploadMultipleImage = (e, prevImgsSetter, imgsSetter) => {
 
   imgsSetter(list);
 };
+
+// failed to execute 'append' on 'formdata': parameter 2 is not of type 'blob'. 에러
+// img url => File
+export const convertURLtoFile = async (url) => {
+  const response = await fetch(url, {
+    method: "GET",
+    withCredentials: true,
+    crossorigin: true,
+    mode: "no-cors",
+  });
+  const data = await response.blob();
+  const ext = url.split(".").pop(); // url 구조에 맞게 수정할 것
+  const filename = url.split("/").pop(); // url 구조에 맞게 수정할 것
+  const metadata = { type: `image/${ext}` };
+  return new File([data], filename, metadata);
+};

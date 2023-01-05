@@ -11,6 +11,7 @@ import { useState } from "react";
 import { AMENITIES_LIST, IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import useInput from "../../hooks/useInput";
 import {
+  convertURLtoFile,
   handleComplete,
   onAmenitiesChecked,
   onUploadImage,
@@ -21,6 +22,7 @@ import { __modifyCampsInfo } from "../../apis/campApi";
 
 const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
+  const formData = new FormData();
   const [campMainImgPrev, setCampMainImgPrev] = useState<
     string | ArrayBuffer | null
   >(""); // 대표사진 미리보기
@@ -73,44 +75,59 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
     setOpen(false);
   };
 
+  const appendConvertedFile = async () => {
+    if (typeof campMainImage === "string") {
+      // const file = await convertURLtoFile(campMainImage);
+      // formData.append("campMainImage", file);
+    } else {
+      formData.append("campMainImage", campMainImage);
+    }
+
+    for (let i = 0; i < campSubImages.length; i++) {
+      if (typeof campSubImages[i] === "string") {
+        // const file = await convertURLtoFile(campSubImages[i]);
+        // formData.append(`campSubImages`, file, `campSubImages${i}`);
+      } else {
+        formData.append(`campSubImages`, campSubImages[i], `campSubImages${i}`);
+      }
+    }
+  };
   // 캠핑장 기본정보 수정
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const campId = campInfo.campId;
-    const formData = new FormData();
-    //formData 형식으로 보냄
-    formData.append("campMainImage", campMainImage);
-    for (let i = 0; i < campSubImages.length; i++) {
-      formData.append(`campSubImages`, campSubImages[i], `campSubImages${i}`);
-    }
-    formData.append("campName", campName);
-    formData.append("campAddress", campAddress);
-    formData.append("campPrice", campPrice);
-    formData.append("campDesc", campDesc.trim());
-    formData.append(
-      "campAmenities",
-      JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
-    );
-    formData.append("checkIn", checkIn);
-    formData.append("checkOut", checkOut);
 
-    dispatch(__modifyCampsInfo({ campId, formData })).then((res) => {
-      const { type, payload } = res;
-      // 등록 성공
-      if (type === "modifyCampsInfo/fulfilled") {
-        alert(`${payload.message}`);
-        window.location.reload();
-      }
-      // 에러처리
-      else if (type === "modifyCampsInfo/rejected") {
-        // 권한이 없는경우
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 412
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
+    //formData 형식으로 보냄
+    appendConvertedFile().then(() => {
+      formData.append("campName", campName);
+      formData.append("campAddress", campAddress);
+      formData.append("campPrice", campPrice);
+      formData.append("campDesc", campDesc.trim());
+      formData.append(
+        "campAmenities",
+        JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
+      );
+      formData.append("checkIn", checkIn);
+      formData.append("checkOut", checkOut);
+
+      dispatch(__modifyCampsInfo({ campId, formData })).then((res) => {
+        const { type, payload } = res;
+        // 등록 성공
+        if (type === "modifyCampsInfo/fulfilled") {
+          alert(`${payload.message}`);
+          window.location.reload();
         }
-      }
+        // 에러처리
+        else if (type === "modifyCampsInfo/rejected") {
+          // 권한이 없는경우
+          if (
+            payload.response.status === 400 ||
+            payload.response.status === 412
+          ) {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        }
+      });
     });
   };
 

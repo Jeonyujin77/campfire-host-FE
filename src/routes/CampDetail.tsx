@@ -29,7 +29,6 @@ const CampDetail = () => {
     }
   }, [campId, dispatch]);
 
-  console.log(campInfo);
   return (
     <Layout>
       <h2>⛺캠핑장기본정보</h2>
