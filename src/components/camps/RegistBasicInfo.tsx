@@ -1,24 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import Input from "../common/Input";
 import DaumPostcode from "react-daum-postcode";
 import useInput from "../../hooks/useInput";
-import { AMENITIES_LIST } from "../../constant/campAmenities";
+import { AMENITIES_LIST, IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import { useAppDispatch } from "../../redux/store";
 import { __registCampsInfo } from "../../apis/campApi";
+import {
+  handleComplete,
+  onAmenitiesChecked,
+  onUploadImage,
+  onUploadMultipleImage,
+} from "../../utils/CampsUtil";
 
 const RegistBasicInfo = () => {
-  const imgType = ["image/jpg", "image/jpeg", "image/png"]; // 허용할 이미지 확장자
+  const [campMainImgPrev, setCampMainImgPrev] = useState<
+    string | ArrayBuffer | null
+  >(""); // 대표사진 미리보기
+  const [campSubImgPrevs, setCampSubImgPrevs] = useState<
+    (string | ArrayBuffer | null)[]
+  >([]); // 추가사진 미리보기
+  // -----------------------------------------------------------------------------------
   const dispatch = useAppDispatch();
   const [campName, setCampName, campNameHandler] = useInput(""); // 업체명
   const [campAddress, setCampAddress] = useState(""); // 주소
   const [campPrice, setCampPrice, campPriceHandler] = useInput(""); // 최소가격
-  const [campAddressDtl, setCampAddressDtl, campAddressDtlHandler] =
-    useInput(""); // 상세주소
   const [campMainImage, setCampMainImage] = useState<string | Blob | File>(""); // 업체대표사진
   const [campSubImages, setCampSubImages] = useState<(string | Blob | File)[]>(
     []
@@ -34,52 +44,24 @@ const RegistBasicInfo = () => {
 
   // 대표 사진 업로드
   const onUploadCampMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.currentTarget;
-    const file = (target.files as FileList)[0];
-
-    if (file === undefined) {
-      return;
-    }
-
-    if (!imgType.includes(file.type)) {
-      alert("파일 형식이 잘못되었습니다.");
-    }
-
-    setCampMainImage(file);
+    onUploadImage(e, setCampMainImgPrev, setCampMainImage);
   };
 
   // 추가 사진 업로드
   const onUploadCampSubImgs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.currentTarget;
-    const files = target.files as FileList;
-    const list = [];
-
-    if (files === undefined) {
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!imgType.includes(file.type)) {
-        alert("파일 형식이 잘못되었습니다.");
-        return;
-      }
-      list.push(file);
-    }
-    setCampSubImages(list);
+    onUploadMultipleImage(e, setCampSubImgPrevs, setCampSubImages);
   };
 
   // 부대시설 체크
   const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.currentTarget;
-    const checked = target.checked;
-    const item = target.value;
+    onAmenitiesChecked(e, campAmenities, setCampAmenities);
+  };
 
-    if (checked) {
-      setCampAmenities([...campAmenities, item]);
-    } else if (!checked) {
-      setCampAmenities(campAmenities.filter((el) => el !== item));
-    }
+  // 주소 검색
+  const onCompletePostSearch = (data: any) => {
+    const fullAddress = handleComplete(data);
+    setCampAddress(fullAddress);
+    setOpen(false);
   };
 
   // 캠핑장 기본정보 등록
@@ -117,39 +99,6 @@ const RegistBasicInfo = () => {
         }
       }
     });
-  };
-
-  // 주소 검색 완료
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = "";
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-
-    setCampAddress(fullAddress);
-    setOpen(false);
-  };
-
-  // 모달 스타일 정의
-  const modalStyle = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
   };
 
   return (
@@ -191,37 +140,41 @@ const RegistBasicInfo = () => {
         >
           검색
         </span>
-        <br />
-        <br />
-        <Input
-          width="500px"
-          type="text"
-          id="camp-address-detail"
-          placeholder="상세주소"
-          value={campAddressDtl}
-          onChange={campAddressDtlHandler}
-        />
       </Row>
       <Row>
         <Label htmlFor="campMainImage">대표사진</Label>
+        <Data>
+          {campMainImgPrev !== "" ? (
+            <img src={campMainImgPrev?.toString()} alt="대표사진 미리보기" />
+          ) : (
+            <></>
+          )}
+        </Data>
         <Input
           width="300px"
           type="file"
           id="campMainImage"
-          name="campMainImage"
-          accept={imgType.join(", ")}
+          accept={IMG_TYPES.join(", ")}
           onChange={onUploadCampMainImg}
         />
       </Row>
       <Row>
         <Label htmlFor="campSubImages">추가사진</Label>
+        <Data>
+          {campSubImgPrevs.length !== 0 ? (
+            campSubImgPrevs.map((img, idx) => (
+              <img src={img?.toString()} alt="추가사진" key={`${img} ${idx}`} />
+            ))
+          ) : (
+            <></>
+          )}
+        </Data>
         <Input
           width="300px"
           type="file"
           id="campSubImages"
-          name="campSubImages"
           multiple
-          accept={imgType.join(", ")}
+          accept={IMG_TYPES.join(", ")}
           onChange={onUploadCampSubImgs}
         />
       </Row>
@@ -271,11 +224,6 @@ const RegistBasicInfo = () => {
           onChange={checkOutHandler}
         />
       </Row>
-      {/* <Row>
-        <Label>매너타임</Label>
-        <Input width="100px" type="time" name="manner-time-start" />~
-        <Input width="100px" type="time" name="manner-time-end" />
-      </Row> */}
       <div className="btnGrp">
         <Button variant="outlined" type="submit" className="submitBtn">
           등록
@@ -287,8 +235,8 @@ const RegistBasicInfo = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={modalStyle}>
-          <DaumPostcode onComplete={handleComplete} />
+        <Box sx={MODAL_STYLE}>
+          <DaumPostcode onComplete={onCompletePostSearch} />
         </Box>
       </Modal>
     </RegistForm>
@@ -313,6 +261,18 @@ const Label = styled.label`
   font-weight: bold;
   margin-bottom: 7px;
   font-size: 14px;
+`;
+
+const Data = styled.div`
+  p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  img {
+    padding: 5px;
+    width: 300px;
+  }
+  margin: 15px 0;
 `;
 
 export default RegistBasicInfo;
