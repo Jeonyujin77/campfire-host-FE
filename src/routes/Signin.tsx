@@ -2,7 +2,7 @@
 import styled from "@emotion/styled";
 import { Button, Paper } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { __signin } from "../apis/hostApi";
 import Input from "../components/common/Input";
 import useInput from "../hooks/useInput";
@@ -10,19 +10,24 @@ import { useAppDispatch } from "../redux/store";
 
 const Signin = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [email, setEmail, emailHandler] = useInput("");
   const [password, setPassword, passwordHandler] = useInput("");
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(__signin({ email, password })).then((res) => {
-      const { type } = res;
+      const { type, payload } = res;
       if (type === "signin/fulfilled") {
         alert("로그인에 성공하였습니다.");
         window.location.href = "/";
-      } else {
-        console.log(res);
+      } else if (type === "signin/rejected") {
+        if (
+          payload.response.status === 400 ||
+          payload.response.status === 412 ||
+          payload.response.status === 419
+        ) {
+          alert(`${payload.response.data.errorMessage}`);
+        }
       }
     });
   };
@@ -52,10 +57,12 @@ const Signin = () => {
               onChange={passwordHandler}
             />
           </FormGrp>
-
           <Button variant="contained" type="submit" className="signinBtn">
             로그인
           </Button>
+          <GoToJoin>
+            아직 회원이 아니시라면? <Link to="/signup">회원가입하기</Link>
+          </GoToJoin>
         </SigninForm>
       </Paper>
     </SigninWrapper>
@@ -92,6 +99,15 @@ const FormGrp = styled.div`
     text-align: left;
     font-size: 16px;
     margin-bottom: 12px;
+  }
+`;
+
+const GoToJoin = styled.p`
+  padding: 20px 0;
+  font-size: 14px;
+  a {
+    color: #ff7a50;
+    font-weight: bold;
   }
 `;
 

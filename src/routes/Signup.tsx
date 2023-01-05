@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
+import { Button } from "@mui/material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { __checkEmailDup, __checkNickDup, __signup } from "../apis/hostApi";
 import Input from "../components/common/Input";
 import {
@@ -18,6 +19,7 @@ import { emailValid, nicknameValid, pwValid, telValid } from "../utils/RegExp";
 
 const Signup = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState(""); // 이메일
   const [nickname, setNickname] = useState(""); // 닉네임
   const [password, setPassword, passwordHandler] = useInput(""); // 비밀번호
@@ -34,6 +36,7 @@ const Signup = () => {
   const [emailDupFlag, setEmailDupFlag] = useState(false); // 이메일중복확인 flag
   const [nickDupFlag, setNickDupFlag] = useState(false); // 닉네임중복확인 flag
 
+  // 패스원드 유효성 검사
   const onBlurPasswordCheck = () => {
     if (password !== passwordCheck) {
       setPwChkValidFlag(false);
@@ -42,51 +45,59 @@ const Signup = () => {
     }
   };
 
+  // 이메일 중복검사
   const checkEmailDup = () => {
     dispatch(__checkEmailDup(email)).then((res) => {
       const { type, payload } = res;
       if (type === "checkEmailDup/fulfilled") {
         setEmailDupFlag(true);
         alert(`${payload.message}`);
-      } else {
-        // To-Do: 에러메시지 처리
+      } else if (type === "checkEmailDup/rejected") {
+        setEmailDupFlag(false);
+        if (
+          payload.response.status === 400 ||
+          payload.response.status === 412
+        ) {
+          alert(`${payload.response.data.errorMessage}`);
+        }
       }
     });
   };
 
+  // 닉네임 중복검사
   const checkNickDup = () => {
     dispatch(__checkNickDup(nickname)).then((res) => {
       const { type, payload } = res;
       if (type === "checkNickDup/fulfilled") {
         setNickDupFlag(true);
         alert(`${payload.message}`);
-      } else {
-        // To-Do: 에러메시지 처리
+      } else if (type === "checkNickDup/rejected") {
+        setNickDupFlag(false);
+        if (
+          payload.response.status === 400 ||
+          payload.response.status === 412
+        ) {
+          alert(`${payload.response.data.errorMessage}`);
+        }
       }
     });
   };
 
+  // 이메일 변경 시
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setEmailDupFlag(false);
   };
 
+  // 닉네임 변경 시
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
     setNickDupFlag(false);
   };
 
+  // 회원가입
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log("--------------------------------------");
-    // console.log("이메일검증: ", emailValidFlag);
-    // console.log("이메일중복확인: ", emailDupFlag);
-    // console.log("닉네임검증: ", nickValidFlag);
-    // console.log("닉네임중복확인: ", nickDupFlag);
-    // console.log("비밀번호검증: ", pwValidFlag);
-    // console.log("비밀번호확인검증: ", pwChkValidFlag);
-    // console.log("전화번호검증: ", telValidFlag);
-    // console.log("--------------------------------------");
 
     // 입력값 검증 및 중복확인이 정상이면
     if (
@@ -103,14 +114,17 @@ const Signup = () => {
         hostName: nickname,
         password,
         phoneNumber: telNum,
-        profileImg: "",
       };
       dispatch(__signup(hostInfo)).then((res) => {
         const { type, payload } = res;
         if (type === "signup/fulfilled") {
           alert(`${payload.message}`);
-        } else {
-          // To-Do: 에러메시지 처리
+          navigate("/signin");
+        } else if (
+          type === "signup/rejected" &&
+          payload.response.status === 400
+        ) {
+          alert(`${payload.response.data.errorMessage}`);
         }
       });
     } else {
@@ -189,12 +203,12 @@ const Signup = () => {
           />
           {!telValidFlag ? <Guide>{TELNUM_NOT_VALID}</Guide> : <></>}
         </FormGrp>
-        <FormGrp>
-          <label>프로필</label>
-          <Input type="file" width="460px" height="30px" />
-        </FormGrp>
-        <Link to="/signin">이미 회원이시라면 로그인하러가기</Link>
-        <button type="submit">가입하기</button>
+        <Button variant="contained" type="submit" className="signupBtn">
+          가입하기
+        </Button>
+        <GoToLogin>
+          이미 회원이신가요? <Link to="/signin">로그인하기</Link>
+        </GoToLogin>
       </SignupForm>
     </SignupWrapper>
   );
@@ -217,6 +231,10 @@ const SignupForm = styled.form`
   width: 460px;
   margin: 30px auto;
   text-align: center;
+  .signupBtn {
+    margin-top: 40px;
+    background-color: #ff7a50;
+  }
 `;
 
 const FormGrp = styled.div`
@@ -246,6 +264,15 @@ const Dupchk = styled.span`
   margin-left: 10px;
   vertical-align: middle;
   line-height: 32px;
+`;
+
+const GoToLogin = styled.p`
+  padding: 20px 0;
+  font-size: 14px;
+  a {
+    color: #ff7a50;
+    font-weight: bold;
+  }
 `;
 
 export default Signup;

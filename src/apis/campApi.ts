@@ -45,8 +45,6 @@ export const __modifyCampsInfo = createAsyncThunk(
   "modifyCampsInfo",
   async (payload: CampModifyInfo, thunkAPI) => {
     const { campId, formData } = payload;
-    console.log(formData.getAll("campSubImages"));
-    console.log(formData.getAll("campAmenities"));
 
     try {
       const response = await api.put(`/api/camps/${campId}`, formData, {

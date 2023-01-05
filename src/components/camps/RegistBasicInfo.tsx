@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
 import { SetStateAction, useState } from "react";
