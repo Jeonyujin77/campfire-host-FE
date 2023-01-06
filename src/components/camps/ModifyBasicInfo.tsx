@@ -77,16 +77,16 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
 
   const appendConvertedFile = async () => {
     if (typeof campMainImage === "string") {
-      // const file = await convertURLtoFile(campMainImage);
-      // formData.append("campMainImage", file);
+      const file = await convertURLtoFile(campMainImage);
+      formData.append("campMainImage", file);
     } else {
       formData.append("campMainImage", campMainImage);
     }
 
     for (let i = 0; i < campSubImages.length; i++) {
       if (typeof campSubImages[i] === "string") {
-        // const file = await convertURLtoFile(campSubImages[i]);
-        // formData.append(`campSubImages`, file, `campSubImages${i}`);
+        const file = await convertURLtoFile(campSubImages[i]);
+        formData.append(`campSubImages`, file, `campSubImages${i}`);
       } else {
         formData.append(`campSubImages`, campSubImages[i], `campSubImages${i}`);
       }
@@ -286,14 +286,7 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
       <Button variant="outlined" type="submit" className="submitBtn">
         저장
       </Button>
-      <Button
-        variant="outlined"
-        type="submit"
-        className="submitBtn"
-        onClick={() => window.location.reload()}
-      >
-        취소
-      </Button>
+      <span onClick={() => window.location.reload()}>취소</span>
     </ModifyForm>
   );
 };

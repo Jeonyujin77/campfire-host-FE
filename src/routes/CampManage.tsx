@@ -5,7 +5,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import RegistBasicInfo from "../components/camps/RegistBasicInfo";
-import { Link } from "react-router-dom";
+import CampsList from "../components/camps/CampsList";
 
 export interface Props {
   children: React.ReactNode;
@@ -60,17 +60,7 @@ const CampManage = () => {
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
-            <ul>
-              <li>
-                <Link to="/camps/21">캠핑장3</Link>
-              </li>
-              <li>
-                <Link to="/camps/18">캠핑장2</Link>
-              </li>
-              <li>
-                <Link to="/camps/16">캠핑장1</Link>
-              </li>
-            </ul>
+            <CampsList />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <RegistBasicInfo />

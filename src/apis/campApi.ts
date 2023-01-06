@@ -47,13 +47,28 @@ export const __modifyCampsInfo = createAsyncThunk(
     const { campId, formData } = payload;
 
     try {
-      const response = await api.put(`/api/camps/${campId}`, formData, {
+      const response = await api.patch(`/api/camps/${campId}`, formData, {
         headers: {
           "content-type": "multipart/form-data;",
           accept: "multipart/form-data,",
           withCredentials: true,
         },
       });
+      if (response.status === 201) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 캠핑장 기본정보 삭제
+export const __deleteCampsInfo = createAsyncThunk(
+  "deleteCampsInfo",
+  async (payload: number, thunkAPI) => {
+    try {
+      const response = await api.delete(`/api/camps/${payload}`);
       if (response.status === 201) {
         return thunkAPI.fulfillWithValue(response.data);
       }
