@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import Paper from "@mui/material/Paper";
+import { memo } from "react";
 
 const Section = ({ children }: React.PropsWithChildren) => {
   return (
@@ -17,6 +18,7 @@ const SecitonWrapper = styled.div`
 
   .section {
     width: calc(100%-40px);
+    min-height: 800px;
     padding: 20px;
 
     h2 {
@@ -26,4 +28,4 @@ const SecitonWrapper = styled.div`
   }
 `;
 
-export default Section;
+export default memo(Section);

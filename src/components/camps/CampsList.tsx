@@ -37,12 +37,12 @@ const CampsList = () => {
       <CampsListWrapper>
         <Card className="campInfoBox">
           <CardContent>
-            <Link to="/camps/18">캠핑장1</Link>
+            <Link to="/camps/1">캠핑장1</Link>
           </CardContent>
           <CardActions>
             <Button
               size="small"
-              onClick={() => onRemoveCamp(18)}
+              onClick={() => onRemoveCamp(1)}
               className="campRemove"
             >
               삭제
@@ -51,12 +51,12 @@ const CampsList = () => {
         </Card>
         <Card className="campInfoBox">
           <CardContent>
-            <Link to="/camps/16">캠핑장2</Link>
+            <Link to="/camps/2">캠핑장2</Link>
           </CardContent>
           <CardActions>
             <Button
               size="small"
-              onClick={() => onRemoveCamp(16)}
+              onClick={() => onRemoveCamp(2)}
               className="campRemove"
             >
               삭제
@@ -65,12 +65,40 @@ const CampsList = () => {
         </Card>
         <Card className="campInfoBox">
           <CardContent>
-            <Link to="/camps/25">캠핑장3</Link>
+            <Link to="/camps/3">캠핑장3</Link>
           </CardContent>
           <CardActions>
             <Button
               size="small"
-              onClick={() => onRemoveCamp(25)}
+              onClick={() => onRemoveCamp(3)}
+              className="campRemove"
+            >
+              삭제
+            </Button>
+          </CardActions>
+        </Card>
+        <Card className="campInfoBox">
+          <CardContent>
+            <Link to="/camps/3">캠핑장4</Link>
+          </CardContent>
+          <CardActions>
+            <Button
+              size="small"
+              onClick={() => onRemoveCamp(4)}
+              className="campRemove"
+            >
+              삭제
+            </Button>
+          </CardActions>
+        </Card>
+        <Card className="campInfoBox">
+          <CardContent>
+            <Link to="/camps/3">캠핑장5</Link>
+          </CardContent>
+          <CardActions>
+            <Button
+              size="small"
+              onClick={() => onRemoveCamp(5)}
               className="campRemove"
             >
               삭제

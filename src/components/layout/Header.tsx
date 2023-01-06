@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "@emotion/styled";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
@@ -78,4 +79,4 @@ const LoginStatus = styled.div`
     color: tomato;
   }
 `;
-export default Header;
+export default memo(Header);

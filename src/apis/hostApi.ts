@@ -1,20 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { HostInfo, HostLogin, HostModifyInfo } from "../interfaces/Hosts";
 import api from "./api";
-
-// 호스트 회원가입 정보
-interface HostInfo {
-  email: string;
-  hostName: string;
-  password: string;
-  phoneNumber: string;
-  profileImg?: string;
-}
-
-// 호스트 로그인 정보
-interface HostLogin {
-  email: string;
-  password: string;
-}
 
 // 이메일 중복확인
 export const __checkEmailDup = createAsyncThunk(
@@ -97,6 +83,45 @@ export const __signin = createAsyncThunk(
           localStorage.setItem("hostId", hostId);
         }
 
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 호스트 정보 조회
+export const __getHostInfo = createAsyncThunk(
+  "getHostInfo",
+  async (payload: number, thunkAPI) => {
+    try {
+      const response = await api.get(`api/hosts/${payload}`);
+      if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 호스트 정보 수정
+export const __modifyHostInfo = createAsyncThunk(
+  "modifyHostInfo",
+  async (payload: HostModifyInfo, thunkAPI) => {
+    const { hostId, formData } = payload;
+
+    try {
+      const response = await api.put(`api/hosts/${hostId}`, formData, {
+        headers: {
+          "content-type": "multipart/form-data;",
+          accept: "multipart/form-data,",
+          withCredentials: true,
+        },
+      });
+
+      if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
     } catch (error) {

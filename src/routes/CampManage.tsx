@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import Layout from "../components/layout/Layout";
 import Tabs from "@mui/material/Tabs";
@@ -7,46 +7,26 @@ import Box from "@mui/material/Box";
 import RegistBasicInfo from "../components/camps/RegistBasicInfo";
 import CampsList from "../components/camps/CampsList";
 import CheckAuth from "../components/common/CheckAuth";
-
-export interface Props {
-  children: React.ReactNode;
-  value: Number;
-  index: Number;
-}
+import TabPanel from "../components/common/TabPanel";
 
 const CampManage = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
-  const handleChange = (
-    event: React.SyntheticEvent<Element, Event>,
-    newValue: any
-  ) => {
-    setValue(newValue);
-  };
+  // 탭 변경 이벤트
+  const handleChange = useCallback(
+    (event: React.SyntheticEvent<Element, Event>, newValue: any) => {
+      setValue(newValue);
+    },
+    []
+  );
 
-  const TabPanel: React.FC<Props> = ({ children, value, index }) => {
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <>{children}</>
-          </Box>
-        )}
-      </div>
-    );
-  };
-
-  function a11yProps(index: number) {
+  // 탭별 아이디 생성
+  const a11yProps = useCallback((index: number) => {
     return {
       id: `simple-tab-${index}`,
       "aria-controls": `simple-tabpanel-${index}`,
     };
-  }
+  }, []);
 
   return (
     <>

@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import Section from "./Section";
+import { memo } from "react";
 
 const Layout = ({ children }: React.PropsWithChildren) => {
   return (
@@ -11,4 +12,4 @@ const Layout = ({ children }: React.PropsWithChildren) => {
   );
 };
 
-export default Layout;
+export default memo(Layout);
