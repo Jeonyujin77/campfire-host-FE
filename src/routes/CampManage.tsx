@@ -6,6 +6,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import RegistBasicInfo from "../components/camps/RegistBasicInfo";
 import CampsList from "../components/camps/CampsList";
+import CheckAuth from "../components/common/CheckAuth";
 
 export interface Props {
   children: React.ReactNode;
@@ -48,26 +49,33 @@ const CampManage = () => {
   }
 
   return (
-    <Layout>
-      <h2>⛺캠핑장관리</h2>
+    <>
+      <CheckAuth />
+      <Layout>
+        <h2>⛺캠핑장관리</h2>
 
-      <CampInfoTab>
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs value={value} onChange={handleChange} aria-label="캠핑장관리">
-              <Tab label="목록보기" {...a11yProps(0)} />
-              <Tab label="등록하기" {...a11yProps(1)} />
-            </Tabs>
+        <CampInfoTab>
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="캠핑장관리"
+              >
+                <Tab label="목록보기" {...a11yProps(0)} />
+                <Tab label="등록하기" {...a11yProps(1)} />
+              </Tabs>
+            </Box>
+            <TabPanel value={value} index={0}>
+              <CampsList />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <RegistBasicInfo />
+            </TabPanel>
           </Box>
-          <TabPanel value={value} index={0}>
-            <CampsList />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <RegistBasicInfo />
-          </TabPanel>
-        </Box>
-      </CampInfoTab>
-    </Layout>
+        </CampInfoTab>
+      </Layout>
+    </>
   );
 };
 

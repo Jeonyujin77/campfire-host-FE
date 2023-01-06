@@ -7,6 +7,7 @@ import { __getCampsInfo } from "../apis/campApi";
 import ListBasicInfo from "../components/camps/ListBasicInfo";
 import { CampInfoProps } from "../interfaces/Camps";
 import ModifyBasicInfo from "../components/camps/ModifyBasicInfo";
+import CheckAuth from "../components/common/CheckAuth";
 
 const CampDetail = () => {
   const param = useParams();
@@ -30,40 +31,43 @@ const CampDetail = () => {
   }, [campId, dispatch]);
 
   return (
-    <Layout>
-      <h2>⛺캠핑장기본정보</h2>
-      {!isModify ? (
-        campInfo !== null && campInfo !== undefined ? (
+    <>
+      <CheckAuth />
+      <Layout>
+        <h2>⛺캠핑장기본정보</h2>
+        {!isModify ? (
+          campInfo !== null && campInfo !== undefined ? (
+            <>
+              <ListBasicInfo campInfo={campInfo} />
+              <Button
+                variant="outlined"
+                type="submit"
+                className="submitBtn"
+                onClick={() => setIsModify(true)}
+              >
+                수정
+              </Button>
+              <Button
+                variant="outlined"
+                type="submit"
+                className="submitBtn"
+                onClick={() => navigate("/camp-manage")}
+              >
+                목록
+              </Button>
+            </>
+          ) : (
+            <>캠핑장 기본정보가 없습니다.</>
+          )
+        ) : campInfo !== null && campInfo !== undefined ? (
           <>
-            <ListBasicInfo campInfo={campInfo} />
-            <Button
-              variant="outlined"
-              type="submit"
-              className="submitBtn"
-              onClick={() => setIsModify(true)}
-            >
-              수정
-            </Button>
-            <Button
-              variant="outlined"
-              type="submit"
-              className="submitBtn"
-              onClick={() => navigate("/camp-manage")}
-            >
-              목록
-            </Button>
+            <ModifyBasicInfo campInfo={campInfo} />
           </>
         ) : (
           <>캠핑장 기본정보가 없습니다.</>
-        )
-      ) : campInfo !== null && campInfo !== undefined ? (
-        <>
-          <ModifyBasicInfo campInfo={campInfo} />
-        </>
-      ) : (
-        <>캠핑장 기본정보가 없습니다.</>
-      )}
-    </Layout>
+        )}
+      </Layout>
+    </>
   );
 };
 

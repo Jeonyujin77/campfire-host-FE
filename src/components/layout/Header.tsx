@@ -24,22 +24,22 @@ const Header = () => {
       <MenuList>
         <MenuItem>
           <ListItemText>
-            <Link to="/reserve-manage">예약관리 </Link>
+            <Link to="/reserve-manage">예약관리</Link>
           </ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemText>
-            <Link to="/camp-manage">캠핑장관리 </Link>
+            <Link to="/camp-manage">캠핑장관리</Link>
           </ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemText>
-            <Link to="/site-manage">사이트관리 </Link>
+            <Link to="/site-manage">사이트관리</Link>
           </ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemText>
-            <Link to="/hostpage">호스트페이지 </Link>
+            <Link to="/hostpage">프로필편집</Link>
           </ListItemText>
         </MenuItem>
       </MenuList>
