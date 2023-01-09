@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { __checkEmailDup, __checkNickDup, __signup } from "../apis/hostApi";
 import Input from "../components/common/Input";
 import {
+  COMPNUM_NOT_VALID,
   EMAIL_NOT_VALID,
   NICK_NOT_VALID,
   PWCHK_NOT_VALID,
@@ -15,7 +16,13 @@ import {
 import useInput from "../hooks/useInput";
 import useInputValid from "../hooks/useInputValid";
 import { useAppDispatch } from "../redux/store";
-import { emailValid, nicknameValid, pwValid, telValid } from "../utils/RegExp";
+import {
+  compNumValid,
+  emailValid,
+  nicknameValid,
+  pwValid,
+  telValid,
+} from "../utils/RegExp";
 
 const Signup = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +31,8 @@ const Signup = () => {
   const [nickname, setNickname] = useState(""); // 닉네임
   const [password, setPassword, passwordHandler] = useInput(""); // 비밀번호
   const [passwordCheck, setPasswordCheck, passwordCheckHandler] = useInput(""); // 비밀번호 재확인
+  const [brandName, setBrandName, brandNameHandler] = useInput(""); // 업체명
+  const [compNum, setCompNum, compNumHandler] = useInput(""); // 사업자번호
   const [telNum, setTelNum, telNumHandler] = useInput(""); // 전화번호
   const [emailValidFlag, emailFlagHandler] = useInputValid(email, emailValid); // 이메일검증 flag
   const [nickValidFlag, nickFlagHandler] = useInputValid(
@@ -31,6 +40,10 @@ const Signup = () => {
     nicknameValid
   ); // 닉네임검증 flag
   const [pwValidFlag, pwFlagHandler] = useInputValid(password, pwValid); // 비밀번호검증 flag
+  const [compNumValidFlag, setCompNumValidFlag] = useInputValid(
+    compNum,
+    compNumValid
+  ); // 사업자번호검증 flag
   const [telValidFlag, setTelValidFlag] = useInputValid(telNum, telValid); // 전화번호검증 flag
   const [pwChkValidFlag, setPwChkValidFlag] = useState(true); // 비밀번호 재확인검증 flag
   const [emailDupFlag, setEmailDupFlag] = useState(false); // 이메일중복확인 flag
@@ -107,12 +120,15 @@ const Signup = () => {
       nickDupFlag &&
       pwValidFlag &&
       pwChkValidFlag &&
+      compNumValidFlag &&
       telValidFlag
     ) {
       const hostInfo = {
         email,
         hostName: nickname,
         password,
+        brandName,
+        companyNumber: compNum,
         phoneNumber: telNum,
       };
       dispatch(__signup(hostInfo)).then((res) => {
@@ -189,6 +205,30 @@ const Signup = () => {
             onBlur={onBlurPasswordCheck}
           />
           {!pwChkValidFlag ? <Guide>{PWCHK_NOT_VALID}</Guide> : <></>}
+        </FormGrp>
+        <FormGrp>
+          <label>업체명</label>
+          <Input
+            type="text"
+            width="460px"
+            height="30px"
+            required
+            value={brandName}
+            onChange={brandNameHandler}
+          />
+        </FormGrp>
+        <FormGrp>
+          <label>사업자번호</label>
+          <Input
+            type="text"
+            width="460px"
+            height="30px"
+            required
+            value={compNum}
+            onChange={compNumHandler}
+            onBlur={setCompNumValidFlag}
+          />
+          {!compNumValidFlag ? <Guide>{COMPNUM_NOT_VALID}</Guide> : <></>}
         </FormGrp>
         <FormGrp>
           <label>전화번호</label>

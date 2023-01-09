@@ -3,6 +3,8 @@ export interface HostInfo {
   email: string;
   hostName: string;
   password: string;
+  brandName: string;
+  companyNumber: string;
   phoneNumber: string;
 }
 

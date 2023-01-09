@@ -43,12 +43,22 @@ export const __signup = createAsyncThunk(
   "signup",
   async (payload: HostInfo, thunkAPI) => {
     try {
-      const { email, hostName, password, phoneNumber } = payload;
+      const {
+        email,
+        hostName,
+        password,
+        brandName,
+        companyNumber,
+        phoneNumber,
+      } = payload;
 
+      console.log(payload);
       const response = await api.post("/api/hosts/signup", {
         email,
         hostName,
         password,
+        brandName,
+        companyNumber,
         phoneNumber,
         profileImg: null,
       });
