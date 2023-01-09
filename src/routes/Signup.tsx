@@ -3,7 +3,12 @@ import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { __checkEmailDup, __checkNickDup, __signup } from "../apis/hostApi";
+import {
+  __checkCompany,
+  __checkEmailDup,
+  __checkNickDup,
+  __signup,
+} from "../apis/hostApi";
 import Input from "../components/common/Input";
 import {
   COMPNUM_NOT_VALID,
@@ -32,7 +37,7 @@ const Signup = () => {
   const [password, setPassword, passwordHandler] = useInput(""); // 비밀번호
   const [passwordCheck, setPasswordCheck, passwordCheckHandler] = useInput(""); // 비밀번호 재확인
   const [brandName, setBrandName, brandNameHandler] = useInput(""); // 업체명
-  const [compNum, setCompNum, compNumHandler] = useInput(""); // 사업자번호
+  const [compNum, setCompNum] = useState(""); // 사업자번호
   const [telNum, setTelNum, telNumHandler] = useInput(""); // 전화번호
   const [emailValidFlag, emailFlagHandler] = useInputValid(email, emailValid); // 이메일검증 flag
   const [nickValidFlag, nickFlagHandler] = useInputValid(
@@ -48,8 +53,9 @@ const Signup = () => {
   const [pwChkValidFlag, setPwChkValidFlag] = useState(true); // 비밀번호 재확인검증 flag
   const [emailDupFlag, setEmailDupFlag] = useState(false); // 이메일중복확인 flag
   const [nickDupFlag, setNickDupFlag] = useState(false); // 닉네임중복확인 flag
+  const [compNumChkFlag, setCompNumChkFlag] = useState(false); // 사업자번호확인 flag
 
-  // 패스원드 유효성 검사
+  // 패스워드 유효성 검사
   const onBlurPasswordCheck = () => {
     if (password !== passwordCheck) {
       setPwChkValidFlag(false);
@@ -60,6 +66,8 @@ const Signup = () => {
 
   // 이메일 중복검사
   const checkEmailDup = () => {
+    if (email === "") return;
+
     dispatch(__checkEmailDup(email)).then((res) => {
       const { type, payload } = res;
       if (type === "checkEmailDup/fulfilled") {
@@ -79,6 +87,8 @@ const Signup = () => {
 
   // 닉네임 중복검사
   const checkNickDup = () => {
+    if (nickname === "") return;
+
     dispatch(__checkNickDup(nickname)).then((res) => {
       const { type, payload } = res;
       if (type === "checkNickDup/fulfilled") {
@@ -96,6 +106,27 @@ const Signup = () => {
     });
   };
 
+  // 사업자번호 확인
+  const checkCompNum = () => {
+    if (brandName === "" || compNum === "") return;
+
+    dispatch(__checkCompany({ brandName, companyNumber: compNum })).then(
+      (res) => {
+        const { type, payload } = res;
+        if (type === "checkCompany/fulfilled") {
+          setCompNumChkFlag(true);
+          alert(`${payload.message}`);
+        } else if (
+          type === "checkCompany/rejected" &&
+          payload.response.status === 400
+        ) {
+          setCompNumChkFlag(false);
+          alert(`${payload.response.data.errorMessage}`);
+        }
+      }
+    );
+  };
+
   // 이메일 변경 시
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -106,6 +137,12 @@ const Signup = () => {
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
     setNickDupFlag(false);
+  };
+
+  // 사업자번호 변경 시
+  const compNumHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCompNum(e.target.value);
+    setCompNumChkFlag(false);
   };
 
   // 회원가입
@@ -120,6 +157,7 @@ const Signup = () => {
       nickDupFlag &&
       pwValidFlag &&
       pwChkValidFlag &&
+      compNumChkFlag &&
       compNumValidFlag &&
       telValidFlag
     ) {
@@ -144,7 +182,7 @@ const Signup = () => {
         }
       });
     } else {
-      alert("중복확인 및 입력 형식을 확인해주세요.");
+      alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
     }
   };
 
@@ -221,13 +259,14 @@ const Signup = () => {
           <label>사업자번호</label>
           <Input
             type="text"
-            width="460px"
+            width="370px"
             height="30px"
             required
             value={compNum}
             onChange={compNumHandler}
             onBlur={setCompNumValidFlag}
           />
+          <Dupchk onClick={checkCompNum}>사업자확인</Dupchk>
           {!compNumValidFlag ? <Guide>{COMPNUM_NOT_VALID}</Guide> : <></>}
         </FormGrp>
         <FormGrp>

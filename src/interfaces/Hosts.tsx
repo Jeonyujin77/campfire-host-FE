@@ -8,6 +8,12 @@ export interface HostInfo {
   phoneNumber: string;
 }
 
+// 사업자번호확인 정보
+export interface CompanyCheck {
+  brandName: string;
+  companyNumber: string;
+}
+
 // 호스트 로그인 정보
 export interface HostLogin {
   email: string;

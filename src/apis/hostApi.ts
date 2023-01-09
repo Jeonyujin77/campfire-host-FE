@@ -1,5 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { HostInfo, HostLogin, HostModifyInfo } from "../interfaces/Hosts";
+import {
+  CompanyCheck,
+  HostInfo,
+  HostLogin,
+  HostModifyInfo,
+} from "../interfaces/Hosts";
 import api from "./api";
 
 // 이메일 중복확인
@@ -35,6 +40,23 @@ export const __checkNickDup = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
+  }
+);
+
+// 사업자번호 확인
+export const __checkCompany = createAsyncThunk(
+  "checkCompany",
+  async (payload: CompanyCheck, thunkAPI) => {
+    try {
+      const { brandName, companyNumber } = payload;
+      const response = await api.post("/api/hosts/signup/checkCompany", {
+        brandName,
+        companyNumber,
+      });
+      if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {}
   }
 );
 
