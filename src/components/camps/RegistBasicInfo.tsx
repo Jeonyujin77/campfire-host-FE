@@ -29,13 +29,12 @@ const RegistBasicInfo = () => {
   const dispatch = useAppDispatch();
   const [campName, setCampName, campNameHandler] = useInput(""); // 업체명
   const [campAddress, setCampAddress] = useState(""); // 주소
-  const [campPrice, setCampPrice, campPriceHandler] = useInput(""); // 최소가격
   const [campMainImage, setCampMainImage] = useState<string | Blob | File>(""); // 업체대표사진
   const [campSubImages, setCampSubImages] = useState<(string | Blob | File)[]>(
     []
   ); // 업체추가사진
   const [campDesc, setCampDesc, campDescHandler] = useInput(""); // 업체소개
-  const [campAmenities, setCampAmenities] = useState<String[]>([]); // 부대시설
+  // const [campAmenities, setCampAmenities] = useState<String[]>([]); // 부대시설
   const [checkIn, setCheckIn, checkInHandler] = useInput(""); // 체크인
   const [checkOut, setCheckOut, checkOutHandler] = useInput(""); // 체크아웃
   // -------------------------------주소찾기팝업-----------------------------------------------
@@ -54,9 +53,9 @@ const RegistBasicInfo = () => {
   };
 
   // 부대시설 체크
-  const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onAmenitiesChecked(e, campAmenities, setCampAmenities);
-  };
+  // const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   onAmenitiesChecked(e, campAmenities, setCampAmenities);
+  // };
 
   // 주소 검색
   const onCompletePostSearch = (data: any) => {
@@ -76,12 +75,11 @@ const RegistBasicInfo = () => {
     }
     formData.append("campName", campName);
     formData.append("campAddress", campAddress);
-    formData.append("campPrice", campPrice);
     formData.append("campDesc", campDesc.trim());
-    formData.append(
-      "campAmenities",
-      JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
-    );
+    // formData.append(
+    //   "campAmenities",
+    //   JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
+    // );
     formData.append("checkIn", checkIn);
     formData.append("checkOut", checkOut);
 
@@ -94,10 +92,7 @@ const RegistBasicInfo = () => {
       }
       // 에러처리
       else if (type === "registCampsInfo/rejected") {
-        // 중복발생
-        if (payload.response.status === 412) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        alert(`${payload.response.data.errorMessage}`);
       }
     });
   };
@@ -113,16 +108,7 @@ const RegistBasicInfo = () => {
           placeholder="업체명"
           value={campName}
           onChange={campNameHandler}
-        />
-      </Row>
-      <Row>
-        <Label>최소가격</Label>
-        <Input
-          width="300px"
-          type="number"
-          placeholder="최소가격"
-          value={campPrice}
-          onChange={campPriceHandler}
+          required
         />
       </Row>
       <Row>
@@ -134,6 +120,7 @@ const RegistBasicInfo = () => {
           placeholder="주소"
           readOnly
           value={campAddress}
+          required
         />
         <span
           onClick={handleOpen}
@@ -157,6 +144,7 @@ const RegistBasicInfo = () => {
           id="campMainImage"
           accept={IMG_TYPES.join(", ")}
           onChange={onUploadCampMainImg}
+          required
         />
       </Row>
       <Row>
@@ -177,6 +165,7 @@ const RegistBasicInfo = () => {
           multiple
           accept={IMG_TYPES.join(", ")}
           onChange={onUploadCampSubImgs}
+          required
         />
       </Row>
       <Row>
@@ -191,9 +180,10 @@ const RegistBasicInfo = () => {
           }}
           value={campDesc}
           onChange={campDescHandler}
+          required
         />
       </Row>
-      <Row>
+      {/* <Row>
         <Label>부대시설</Label>
         <div>
           {AMENITIES_LIST.map((item) => (
@@ -208,7 +198,7 @@ const RegistBasicInfo = () => {
             </label>
           ))}
         </div>
-      </Row>
+      </Row> */}
       <Row>
         <Label htmlFor="check-in">입실/퇴실시간</Label>
         <Input
@@ -216,6 +206,7 @@ const RegistBasicInfo = () => {
           type="time"
           id="check-in"
           onChange={checkInHandler}
+          required
         />
         ~
         <Input
@@ -223,6 +214,7 @@ const RegistBasicInfo = () => {
           type="time"
           id="check-out"
           onChange={checkOutHandler}
+          required
         />
       </Row>
       <div className="btnGrp">
