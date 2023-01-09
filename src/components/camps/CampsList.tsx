@@ -7,7 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
 
-const CampsList = () => {
+const CampsList = ({ campIdList }: { campIdList: number[] }) => {
   const dispatch = useAppDispatch();
 
   // 캠핑장 삭제
@@ -33,78 +33,27 @@ const CampsList = () => {
 
   return (
     <>
-      {/* TO-DO: 호스트별 보유 캠핑장 조회 추가 */}
       <CampsListWrapper>
-        <Card className="campInfoBox">
-          <CardContent>
-            <Link to="/camps/1">캠핑장1</Link>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => onRemoveCamp(1)}
-              className="campRemove"
-            >
-              삭제
-            </Button>
-          </CardActions>
-        </Card>
-        <Card className="campInfoBox">
-          <CardContent>
-            <Link to="/camps/2">캠핑장2</Link>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => onRemoveCamp(2)}
-              className="campRemove"
-            >
-              삭제
-            </Button>
-          </CardActions>
-        </Card>
-        <Card className="campInfoBox">
-          <CardContent>
-            <Link to="/camps/3">캠핑장3</Link>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => onRemoveCamp(3)}
-              className="campRemove"
-            >
-              삭제
-            </Button>
-          </CardActions>
-        </Card>
-        <Card className="campInfoBox">
-          <CardContent>
-            <Link to="/camps/3">캠핑장4</Link>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => onRemoveCamp(4)}
-              className="campRemove"
-            >
-              삭제
-            </Button>
-          </CardActions>
-        </Card>
-        <Card className="campInfoBox">
-          <CardContent>
-            <Link to="/camps/3">캠핑장5</Link>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              onClick={() => onRemoveCamp(5)}
-              className="campRemove"
-            >
-              삭제
-            </Button>
-          </CardActions>
-        </Card>
+        {campIdList.length !== 0 ? (
+          campIdList.map((campId) => (
+            <Card className="campInfoBox" key={campId}>
+              <CardContent>
+                <Link to={`/camps/${campId}`}>캠핑장 {campId}</Link>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  onClick={() => onRemoveCamp(campId)}
+                  className="campRemove"
+                >
+                  삭제
+                </Button>
+              </CardActions>
+            </Card>
+          ))
+        ) : (
+          <p>등록된 캠핑장이 없습니다.</p>
+        )}
       </CampsListWrapper>
     </>
   );
