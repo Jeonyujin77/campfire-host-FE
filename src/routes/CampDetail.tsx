@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import Layout from "../components/layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -37,25 +38,27 @@ const CampDetail = () => {
         <h2>⛺캠핑장기본정보</h2>
         {!isModify ? (
           campInfo !== null && campInfo !== undefined ? (
-            <>
+            <Box>
               <ListBasicInfo campInfo={campInfo} />
-              <Button
-                variant="outlined"
-                type="submit"
-                className="submitBtn"
-                onClick={() => setIsModify(true)}
-              >
-                수정
-              </Button>
-              <Button
-                variant="outlined"
-                type="submit"
-                className="submitBtn"
-                onClick={() => navigate("/camp-manage")}
-              >
-                목록
-              </Button>
-            </>
+              <div className="btnGrp">
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  className="submitBtn"
+                  onClick={() => navigate("/camp-manage")}
+                >
+                  목록
+                </Button>
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  className="submitBtn"
+                  onClick={() => setIsModify(true)}
+                >
+                  수정
+                </Button>
+              </div>
+            </Box>
           ) : (
             <>캠핑장 기본정보가 없습니다.</>
           )
@@ -70,5 +73,17 @@ const CampDetail = () => {
     </>
   );
 };
+
+const Box = styled.div`
+  .btnGrp {
+    text-align: left;
+    margin-top: 60px;
+    .submitBtn {
+      border: 1px solid #ff7a50;
+      color: #ff7a50;
+      margin: 0 5px;
+    }
+  }
+`;
 
 export default CampDetail;

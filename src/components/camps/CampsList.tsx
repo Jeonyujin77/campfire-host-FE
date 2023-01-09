@@ -6,6 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
+import CheckAuth from "../common/CheckAuth";
 
 const CampsList = ({ campIdList }: { campIdList: number[] }) => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ const CampsList = ({ campIdList }: { campIdList: number[] }) => {
 
   return (
     <>
+      <CheckAuth />
       <CampsListWrapper>
         {campIdList.length !== 0 ? (
           campIdList.map((campId) => (
