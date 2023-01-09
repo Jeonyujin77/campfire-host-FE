@@ -52,12 +52,7 @@ const Hostpage = () => {
           }
           // 에러처리
           else if (type === "getHostInfo/rejected") {
-            if (
-              payload.response.status === 400 ||
-              payload.response.status === 404
-            ) {
-              alert(`${payload.response.data.errorMessage}`);
-            }
+            alert(`${payload.response.data.errorMessage}`);
           }
         })
       : navigate("/signin");
@@ -80,12 +75,7 @@ const Hostpage = () => {
         alert(`${payload.message}`);
       } else if (type === "checkNickDup/rejected") {
         setNickDupFlag(false);
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 412
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        alert(`${payload.response.data.errorMessage}`);
       }
     });
   };
@@ -138,13 +128,7 @@ const Hostpage = () => {
         window.location.reload();
       } // 에러처리
       else if (type === "modifyHostInfo/rejected") {
-        // 권한이 없는경우
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 404
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        alert(`${payload.response.data.errorMessage}`);
       }
     });
   };
