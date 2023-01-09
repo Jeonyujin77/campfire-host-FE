@@ -43,10 +43,10 @@ const Hostpage = () => {
       ? dispatch(__getHostInfo(hostId)).then((res) => {
           const { type, payload } = res;
           if (type === "getHostInfo/fulfilled") {
-            const { hostId, userName, email, phoneNumber, profileImg } =
+            const { hostId, hostName, email, phoneNumber, profileImg } =
               payload.host;
-            setHostInfo({ hostId, userName, email, phoneNumber, profileImg });
-            setNickname(userName);
+            setHostInfo({ hostId, hostName, email, phoneNumber, profileImg });
+            setNickname(hostName);
             setPhoneNumber(phoneNumber);
             setProfile(profileImg);
           }
@@ -97,7 +97,7 @@ const Hostpage = () => {
 
   // 닉네임 변경여부 확인
   const checkNicknameChange = () => {
-    const flag = hostInfo?.userName === nickname ? true : false;
+    const flag = hostInfo?.hostName === nickname ? true : false;
     return flag;
   };
 
@@ -107,7 +107,7 @@ const Hostpage = () => {
 
     // 닉네임 동일한 경우
     if (checkNicknameChange() && hostInfo !== undefined) {
-      setNickname(hostInfo.userName);
+      setNickname(hostInfo.hostName);
     }
     // 중복확인 안한 경우
     else if (!nickDupFlag) {

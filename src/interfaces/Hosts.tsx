@@ -24,7 +24,7 @@ export interface HostLogin {
 export interface HostFullInfo {
   hostId?: number;
   email?: string;
-  userName: string;
+  hostName: string;
   phoneNumber: string;
   profileImg: string;
 }
