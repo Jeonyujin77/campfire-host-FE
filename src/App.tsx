@@ -7,6 +7,8 @@ import Signup from "./routes/Signup";
 import Signin from "./routes/Signin";
 import SiteManage from "./routes/SiteManange";
 import CampDetail from "./routes/CampDetail";
+import CampSitesMng from "./components/sites/CampSitesMng";
+import SiteDetail from "./routes/SiteDetail";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/camp-manage" element={<CampManage />} />
         <Route path="/camps/:campId" element={<CampDetail />} />
         <Route path="/site-manage" element={<SiteManage />} />
+        <Route path="/site-manage/:campId" element={<CampSitesMng />} />
+        <Route path="/sites/:siteId" element={<SiteDetail />} />
         <Route path="/hostpage" element={<Hostpage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
