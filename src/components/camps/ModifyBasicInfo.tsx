@@ -19,6 +19,7 @@ import {
 } from "../../utils/CampsUtil";
 import { useAppDispatch } from "../../redux/store";
 import { __modifyCampsInfo } from "../../apis/campApi";
+import CheckAuth from "../common/CheckAuth";
 
 const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
@@ -32,9 +33,6 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // --------------------------------캠핑장기본정보---------------------------------------------------
   const dispatch = useAppDispatch();
   const [campName, setCampName, campNameHandler] = useInput(campInfo.campName); // 업체명
-  const [campPrice, setCampPrice, campPriceHandler] = useInput(
-    campInfo.campPrice
-  ); // 최소가격
   const [campAddress, setCampAddress] = useState(campInfo.campAddress); // 주소
   const [campMainImage, setCampMainImage] = useState<string | Blob | File>(
     campInfo.campMainImage
@@ -43,9 +41,9 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
     campInfo.campSubImages
   ); // 업체추가사진
   const [campDesc, setCampDesc, campDescHandler] = useInput(campInfo.campDesc); // 업체소개
-  const [campAmenities, setCampAmenities] = useState<String[]>([
-    ...campInfo.campAmenities,
-  ]); // 부대시설
+  // const [campAmenities, setCampAmenities] = useState<String[]>([
+  //   ...campInfo.campAmenities,
+  // ]); // 부대시설
   const [checkIn, setCheckIn, checkInHandler] = useInput(campInfo.checkIn); // 체크인
   const [checkOut, setCheckOut, checkOutHandler] = useInput(campInfo.checkOut); // 체크아웃
   // -------------------------------주소찾기팝업-----------------------------------------------
@@ -64,9 +62,9 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   };
 
   // 부대시설 체크
-  const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onAmenitiesChecked(e, campAmenities, setCampAmenities);
-  };
+  // const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   onAmenitiesChecked(e, campAmenities, setCampAmenities);
+  // };
 
   // 주소 검색
   const onCompletePostSearch = (data: any) => {
@@ -95,18 +93,23 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // 캠핑장 기본정보 수정
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (campAddress === "") {
+      alert("주소를 입력하세요.");
+      return;
+    }
+
     const campId = campInfo.campId;
 
     //formData 형식으로 보냄
     appendConvertedFile().then(() => {
       formData.append("campName", campName);
       formData.append("campAddress", campAddress);
-      formData.append("campPrice", campPrice);
       formData.append("campDesc", campDesc.trim());
-      formData.append(
-        "campAmenities",
-        JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
-      );
+      // formData.append(
+      //   "campAmenities",
+      //   JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
+      // );
       formData.append("checkIn", checkIn);
       formData.append("checkOut", checkOut);
 
@@ -119,125 +122,126 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
         }
         // 에러처리
         else if (type === "modifyCampsInfo/rejected") {
-          // 권한이 없는경우
-          if (
-            payload.response.status === 400 ||
-            payload.response.status === 412
-          ) {
-            alert(`${payload.response.data.errorMessage}`);
-          }
+          alert(`${payload.response.data.errorMessage}`);
         }
       });
     });
   };
 
   return (
-    <ModifyForm onSubmit={onSubmit}>
-      <Row>
-        <Label htmlFor="camp-name">업체명</Label>
-        <Data>
-          <Input
-            width="300px"
-            type="text"
-            id="camp-name"
-            placeholder="업체명"
-            value={campName}
-            onChange={campNameHandler}
-          />
-        </Data>
-      </Row>
-      <Row>
-        <Label>최소가격</Label>
-        <Data>
-          <Input
-            width="300px"
-            type="number"
-            placeholder="최소가격"
-            value={campPrice}
-            onChange={campPriceHandler}
-          />
-        </Data>
-      </Row>
-      <Row>
-        <Label htmlFor="camp-address">주소</Label>
-        <Data>
-          <Input
-            width="400px"
-            type="text"
-            id="camp-address"
-            placeholder="주소"
-            readOnly
-            value={campAddress}
-          />
-          <span
-            onClick={handleOpen}
-            style={{ marginLeft: "10px", cursor: "pointer" }}
-          >
-            검색
-          </span>
-        </Data>
-      </Row>
-      <Row>
-        <Label htmlFor="campMainImage">대표사진</Label>
-        <Data>
-          {campMainImgPrev !== "" ? (
-            <img src={campMainImgPrev?.toString()} alt="대표사진 미리보기" />
-          ) : (
+    <>
+      <CheckAuth />
+      <ModifyForm onSubmit={onSubmit}>
+        <Row>
+          <Label htmlFor="camp-name">업체명</Label>
+          <Data>
+            <Input
+              width="300px"
+              type="text"
+              id="camp-name"
+              placeholder="업체명"
+              value={campName}
+              onChange={campNameHandler}
+              required
+            />
+          </Data>
+        </Row>
+        <Row>
+          <Label htmlFor="camp-address">주소</Label>
+          <Data>
+            <Input
+              width="400px"
+              type="text"
+              id="camp-address"
+              placeholder="주소"
+              readOnly
+              value={campAddress}
+              required
+            />
+            <span
+              onClick={handleOpen}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
+            >
+              검색
+            </span>
+          </Data>
+        </Row>
+        <Row>
+          <Label htmlFor="campMainImage">대표사진</Label>
+          <Data>
+            {
+              campMainImgPrev !== "" ? (
+                <img
+                  src={campMainImgPrev?.toString()}
+                  alt="대표사진 미리보기"
+                />
+              ) : (
+                <></>
+              )
+              /*(
             <img
               src={campInfo.campMainImage}
               alt="대표사진"
               defaultValue={campInfo.campMainImage}
             />
-          )}
-        </Data>
-        <Input
-          width="300px"
-          type="file"
-          id="campMainImage"
-          accept={IMG_TYPES.join(", ")}
-          onChange={onUploadCampMainImg}
-        />
-      </Row>
-      <Row>
-        <Label htmlFor="campSubImages">추가사진</Label>
-        <Data>
-          {campSubImgPrevs.length !== 0
-            ? campSubImgPrevs.map((img, idx) => (
-                <img
-                  src={img?.toString()}
-                  alt="추가사진"
-                  key={`${img} ${idx}`}
-                />
-              ))
-            : campInfo.campSubImages.map((img, idx) => (
-                <img src={img} alt="추가사진" key={`${img} ${idx}`} />
-              ))}
-        </Data>
-        <Input
-          width="300px"
-          type="file"
-          id="campSubImages"
-          multiple
-          accept={IMG_TYPES.join(", ")}
-          onChange={onUploadCampSubImgs}
-        />
-      </Row>
-      <Row>
-        <Label htmlFor="camp-detail">캠핑장소개</Label>
-        <Data style={{ maxWidth: "1000px" }}>
-          <textarea
-            style={{
-              resize: "none",
-              width: "600px",
-              height: "200px",
-              border: "1px solid #dadada",
-            }}
-            value={campDesc}
-            onChange={campDescHandler}
+          )*/
+            }
+          </Data>
+          <Input
+            width="300px"
+            type="file"
+            id="campMainImage"
+            accept={IMG_TYPES.join(", ")}
+            onChange={onUploadCampMainImg}
+            required
           />
-        </Data>
-      </Row>
-      <Row>
+        </Row>
+        <Row>
+          <Label htmlFor="campSubImages">추가사진</Label>
+          <Data>
+            {
+              campSubImgPrevs.length !== 0 ? (
+                campSubImgPrevs.map((img, idx) => (
+                  <img
+                    src={img?.toString()}
+                    alt="추가사진"
+                    key={`${img} ${idx}`}
+                  />
+                ))
+              ) : (
+                <></>
+              ) /*campInfo.campSubImages.map((img, idx) => (
+                <img src={img} alt="추가사진" key={`${img} ${idx}`} />
+            ))*/
+            }
+          </Data>
+          <Input
+            width="300px"
+            type="file"
+            id="campSubImages"
+            multiple
+            accept={IMG_TYPES.join(", ")}
+            onChange={onUploadCampSubImgs}
+            required
+          />
+        </Row>
+        <Row>
+          <Label htmlFor="camp-detail">캠핑장소개</Label>
+          <Data style={{ maxWidth: "1000px" }}>
+            <textarea
+              style={{
+                resize: "none",
+                width: "600px",
+                height: "200px",
+                border: "1px solid #dadada",
+              }}
+              value={campDesc}
+              onChange={campDescHandler}
+              required
+            />
+          </Data>
+        </Row>
+        {/* <Row>
         <Label>부대시설</Label>
         <Data>
           {AMENITIES_LIST.map((item) => (
@@ -252,42 +256,54 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             </label>
           ))}
         </Data>
-      </Row>
-      <Row>
-        <Label htmlFor="check-in">입실/퇴실시간</Label>
-        <Data>
-          <Input
-            width="100px"
-            type="time"
-            id="check-in"
-            value={checkIn}
-            onChange={checkInHandler}
-          />
-          ~
-          <Input
-            width="100px"
-            type="time"
-            id="check-out"
-            value={checkOut}
-            onChange={checkOutHandler}
-          />
-        </Data>
-      </Row>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={MODAL_STYLE}>
-          <DaumPostcode onComplete={onCompletePostSearch} />
-        </Box>
-      </Modal>
-      <Button variant="outlined" type="submit" className="submitBtn">
-        저장
-      </Button>
-      <span onClick={() => window.location.reload()}>취소</span>
-    </ModifyForm>
+      </Row> */}
+        <Row>
+          <Label htmlFor="check-in">입실/퇴실시간</Label>
+          <Data>
+            <Input
+              width="100px"
+              type="time"
+              id="check-in"
+              value={checkIn}
+              onChange={checkInHandler}
+              required
+            />
+            ~
+            <Input
+              width="100px"
+              type="time"
+              id="check-out"
+              value={checkOut}
+              onChange={checkOutHandler}
+              required
+            />
+          </Data>
+        </Row>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={MODAL_STYLE}>
+            <DaumPostcode onComplete={onCompletePostSearch} />
+          </Box>
+        </Modal>
+        <div className="btnGrp">
+          <Button variant="outlined" type="submit" className="submitBtn">
+            저장
+          </Button>
+          <Button
+            variant="outlined"
+            type="submit"
+            className="submitBtn"
+            onClick={() => window.location.reload()}
+          >
+            취소
+          </Button>
+        </div>
+      </ModifyForm>
+    </>
   );
 };
 
@@ -298,6 +314,7 @@ const ModifyForm = styled.form`
     .submitBtn {
       border: 1px solid #ff7a50;
       color: #ff7a50;
+      margin: 0 5px;
     }
   }
 `;
