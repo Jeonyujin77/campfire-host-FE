@@ -4,3 +4,9 @@ export interface KeywordsInfo {
   typeLists: string[] | null;
   themeLists: string[] | null;
 }
+
+// 키워드 수정 
+export interface Keywords {
+  campId: string;
+  keywordList: string[];
+}

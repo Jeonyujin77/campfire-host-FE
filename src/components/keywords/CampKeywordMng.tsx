@@ -34,8 +34,8 @@ const CampKeywordMng = () => {
       <CheckAuth />
       <Layout>
         <h2>⛺키워드관리</h2>
-        {keywordList !== undefined ? (
-          <KeywordsList keywordList={keywordList} />
+        {keywordList !== undefined && campId !== undefined ? (
+          <KeywordsList keywordList={keywordList} campId={campId} />
         ) : (
           <>키워드 정보가 없습니다.</>
         )}
