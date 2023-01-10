@@ -22,10 +22,7 @@ const CampsList = ({ campIdList }: { campIdList: number[] }) => {
           window.location.reload();
         }
         // 에러처리
-        else if (
-          type === "deleteCampsInfo/rejected" &&
-          payload.response.status === 400
-        ) {
+        else if (type === "deleteCampsInfo/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
       });

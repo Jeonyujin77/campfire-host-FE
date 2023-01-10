@@ -82,7 +82,7 @@ const Data = styled.div`
 `;
 
 const Text = styled.p`
-  white-space: pre;
+  white-space: pre-line;
 `;
 
 export default ListBasicInfo;

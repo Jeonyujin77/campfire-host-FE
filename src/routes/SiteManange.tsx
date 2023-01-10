@@ -29,12 +29,14 @@ const SiteManage = () => {
 };
 
 const SiteList = styled.ul`
-  padding: 40px;
+  padding: 40px 0;
   width: 600px;
+
   li {
     height: 40px;
     line-height: 40px;
     padding: 0 10px;
+    border: 1px solid #dadada;
     &:nth-of-type(odd) {
       background-color: #dadada;
     }

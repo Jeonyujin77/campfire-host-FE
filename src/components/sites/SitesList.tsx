@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
-import { __getSiteList } from "../../apis/siteApi";
+import { __deleteSitesInfo, __getSiteList } from "../../apis/siteApi";
 import { Site } from "../../interfaces/Sites";
 import CheckAuth from "../common/CheckAuth";
 
@@ -36,6 +36,28 @@ const SitesList = () => {
     }
   }, []);
 
+  // 캠핑장 삭제
+  const onRemoveSite = (siteId: number) => {
+    if (window.confirm("삭제하시겠습니까?")) {
+      if (campId !== undefined) {
+        dispatch(__deleteSitesInfo({ campId, siteId: siteId.toString() })).then(
+          (res) => {
+            const { type, payload } = res;
+            // 삭제 성공
+            if (type === "deleteSitesInfo/fulfilled") {
+              alert("캠핑장 사이트가 삭제되었습니다.");
+              window.location.reload();
+            }
+            // 에러처리
+            else if (type === "deleteSitesInfo/rejected") {
+              alert(`${payload.response.data.errorMessage}`);
+            }
+          }
+        );
+      }
+    }
+  };
+
   return (
     <>
       <CheckAuth />
@@ -52,9 +74,7 @@ const SitesList = () => {
               <CardActions>
                 <Button
                   size="small"
-                  onClick={() => {
-                    return;
-                  }}
+                  onClick={() => onRemoveSite(site.siteId)}
                   className="siteRemove"
                 >
                   삭제

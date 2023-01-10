@@ -86,3 +86,21 @@ export const __getSiteInfo = createAsyncThunk(
     }
   }
 );
+
+// 사이트 삭제
+export const __deleteSitesInfo = createAsyncThunk(
+  "deleteSitesInfo",
+  async (payload: SiteDetailParam, thunkAPI) => {
+    const { campId, siteId } = payload;
+
+    try {
+      const response = await api.delete(`/api/camps/${campId}/sites/${siteId}`);
+
+      if (response.status === 204) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
