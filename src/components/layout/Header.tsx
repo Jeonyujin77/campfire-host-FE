@@ -72,6 +72,8 @@ const HeaderWrapper = styled.div`
   a {
     display: inline-block;
     width: 100%;
+    height: 40px;
+    line-height: 40px;
   }
 `;
 
