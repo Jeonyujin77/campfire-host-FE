@@ -37,14 +37,14 @@ const ListSiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             <img src={siteInfo.siteMainImage} alt="대표사진" />
           </Data>
         </Row>
-        {/* <Row>
-          <Label htmlFor="campSubImages">추가사진</Label>
+        <Row>
+          <Label>추가사진</Label>
           <Data>
-            {campInfo.campSubImages.map((img, idx) => (
+            {siteInfo.siteSubImages.map((img, idx) => (
               <img src={img} alt="추가사진" key={`${img} ${idx}`} />
             ))}
           </Data>
-        </Row> */}
+        </Row>
         <Row>
           <Label>최소인원</Label>
           <Data>
