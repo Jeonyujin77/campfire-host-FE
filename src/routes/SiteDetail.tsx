@@ -21,7 +21,6 @@ const SiteDetail = () => {
   useEffect(() => {
     if (campId !== undefined && siteId !== undefined) {
       dispatch(__getSiteInfo({ campId, siteId })).then((res) => {
-        console.log(res);
         const { type, payload } = res;
 
         if (type === "getSiteInfo/fulfilled") {
@@ -33,8 +32,6 @@ const SiteDetail = () => {
       navigate(-1);
     }
   }, []);
-
-  console.log(siteInfo);
 
   return (
     <>
@@ -68,7 +65,7 @@ const SiteDetail = () => {
             <>사이트 정보가 없습니다.</>
           )
         ) : siteInfo !== null && siteInfo !== undefined ? (
-          <>{<ModifySiteInfo />}</>
+          <>{<ModifySiteInfo siteInfo={siteInfo} />}</>
         ) : (
           <>사이트 정보가 없습니다.</>
         )}

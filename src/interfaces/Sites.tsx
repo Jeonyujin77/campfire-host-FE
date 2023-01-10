@@ -2,6 +2,7 @@
 export interface SiteInfo {
   formData: FormData;
   campId: number;
+  siteId?: number;
 }
 
 // 사이트 정보
@@ -34,5 +35,5 @@ export interface SiteInfoProps {
   siteDesc: string;
   siteInfo: string;
   siteMainImage: string;
-  siteSubImages?: string[];
+  siteSubImages: string[];
 }

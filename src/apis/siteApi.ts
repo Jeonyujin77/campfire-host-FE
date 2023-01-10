@@ -42,6 +42,34 @@ export const __registSitesInfo = createAsyncThunk(
   }
 );
 
+// 사이트 정보 수정
+export const __modifySitesInfo = createAsyncThunk(
+  "modifySitesInfo",
+  async (payload: SiteInfo, thunkAPI) => {
+    const { formData, campId, siteId } = payload;
+
+    try {
+      const response = await api.put(
+        `/api/camps/${campId}/sites/${siteId}`,
+        formData,
+        {
+          headers: {
+            "content-type": "multipart/form-data;",
+            accept: "multipart/form-data,",
+            withCredentials: true,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 // 사이트 상세 조회
 export const __getSiteInfo = createAsyncThunk(
   "getSiteInfo",

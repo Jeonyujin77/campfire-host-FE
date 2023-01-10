@@ -13,12 +13,6 @@ const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             <p>{campInfo.campName}</p>
           </Data>
         </Row>
-        {/* <Row>
-        <Label>최소가격</Label>
-        <Data>
-          <p>{campInfo.campPrice}원</p>
-        </Data>
-      </Row> */}
         <Row>
           <Label htmlFor="camp-address">주소</Label>
           <Data>
@@ -42,7 +36,7 @@ const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
         <Row>
           <Label htmlFor="camp-detail">캠핑장소개</Label>
           <Data style={{ maxWidth: "1000px" }}>
-            <p>{campInfo.campDesc}</p>
+            <Text>{campInfo.campDesc}</Text>
           </Data>
         </Row>
         {/* <Row>
@@ -81,10 +75,14 @@ const Data = styled.div`
   }
   img {
     padding: 5px;
-    min-width: 500px;
-    max-width: 700px;
+    width: 500px;
+    border-radius: 15px;
   }
   margin: 15px 0;
+`;
+
+const Text = styled.p`
+  white-space: pre;
 `;
 
 export default ListBasicInfo;
