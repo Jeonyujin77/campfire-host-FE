@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { SiteInfo } from "../interfaces/Sites";
+import { SiteDetailParam, SiteInfo } from "../interfaces/Sites";
 import api from "./api";
 
 // 사이트 조회
@@ -34,6 +34,23 @@ export const __registSitesInfo = createAsyncThunk(
       });
 
       if (response.status === 201) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 사이트 상세 조회
+export const __getSiteInfo = createAsyncThunk(
+  "getSiteInfo",
+  async (payload: SiteDetailParam, thunkAPI) => {
+    const { campId, siteId } = payload;
+    try {
+      const response = await api.get(`/api/camps/${campId}/sites/${siteId}`);
+
+      if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
     } catch (error) {

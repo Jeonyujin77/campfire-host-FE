@@ -21,7 +21,7 @@ function App() {
         <Route path="/camps/:campId" element={<CampDetail />} />
         <Route path="/site-manage" element={<SiteManage />} />
         <Route path="/site-manage/:campId" element={<CampSitesMng />} />
-        <Route path="/sites/:siteId" element={<SiteDetail />} />
+        <Route path="/sites/:campId/:siteId" element={<SiteDetail />} />
         <Route path="/hostpage" element={<Hostpage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />

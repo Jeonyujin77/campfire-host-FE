@@ -45,7 +45,9 @@ const SitesList = () => {
           sites.map((site) => (
             <Card className="siteInfoBox" key={site.siteId}>
               <CardContent>
-                <Link to={`/sites/${site.siteId}`}>{site.siteName}</Link>
+                <Link to={`/sites/${campId}/${site.siteId}`}>
+                  {site.siteName}
+                </Link>
               </CardContent>
               <CardActions>
                 <Button
