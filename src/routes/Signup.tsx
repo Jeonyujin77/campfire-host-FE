@@ -116,10 +116,7 @@ const Signup = () => {
         if (type === "checkCompany/fulfilled") {
           setCompNumChkFlag(true);
           alert(`${payload.message}`);
-        } else if (
-          type === "checkCompany/rejected" &&
-          payload.response.status === 400
-        ) {
+        } else if (type === "checkCompany/rejected") {
           setCompNumChkFlag(false);
           alert(`${payload.response.data.errorMessage}`);
         }

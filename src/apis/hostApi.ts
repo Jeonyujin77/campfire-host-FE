@@ -56,7 +56,9 @@ export const __checkCompany = createAsyncThunk(
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 );
 
