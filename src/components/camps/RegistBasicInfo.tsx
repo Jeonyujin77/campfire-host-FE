@@ -13,7 +13,7 @@ import { useAppDispatch } from "../../redux/store";
 import { __registCampsInfo } from "../../apis/campApi";
 import {
   handleComplete,
-  onAmenitiesChecked,
+  // onAmenitiesChecked,
   onUploadImage,
   onUploadMultipleImage,
 } from "../../utils/CampsUtil";

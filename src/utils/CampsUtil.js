@@ -19,8 +19,8 @@ export const handleComplete = (data) => {
   return fullAddress;
 };
 
-// 부대시설 목록 체크
-export const onAmenitiesChecked = (e, items, setter) => {
+// 목록 체크
+export const onChecked = (e, items, setter) => {
   const target = e.currentTarget;
   const checked = target.checked;
   const item = target.value;

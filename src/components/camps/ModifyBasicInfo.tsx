@@ -13,7 +13,7 @@ import useInput from "../../hooks/useInput";
 import {
   convertURLtoFile,
   handleComplete,
-  onAmenitiesChecked,
+  // onAmenitiesChecked,
   onUploadImage,
   onUploadMultipleImage,
 } from "../../utils/CampsUtil";

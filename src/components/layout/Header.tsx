@@ -40,6 +40,11 @@ const Header = () => {
         </MenuItem>
         <MenuItem>
           <ListItemText>
+            <Link to="/keyword-manage">키워드관리</Link>
+          </ListItemText>
+        </MenuItem>
+        <MenuItem>
+          <ListItemText>
             <Link to="/hostpage">프로필편집</Link>
           </ListItemText>
         </MenuItem>
