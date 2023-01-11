@@ -44,7 +44,6 @@ const ReserveManange = () => {
 
   const handleClose = () => setOpen(false);
 
-  console.log(reserveList)
   return (
     <>
       <CheckAuth />
