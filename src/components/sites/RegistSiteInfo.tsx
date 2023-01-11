@@ -76,8 +76,8 @@ const RegistSiteInfo = () => {
 
         // 등록 성공
         if (type === "registSitesInfo/fulfilled") {
+          navigate(-1);
           alert(`${payload.message}`);
-          navigate("/");
         }
         // 에러처리
         else if (type === "registSitesInfo/rejected") {
