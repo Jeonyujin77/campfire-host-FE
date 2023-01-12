@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "../redux/store";
 import {
   __checkNickDup,
+  __deleteAccount,
   __getHostInfo,
   __modifyHostInfo,
 } from "../apis/hostApi";
@@ -41,20 +42,20 @@ const Hostpage = () => {
   useEffect(() => {
     hostId !== null
       ? dispatch(__getHostInfo(hostId)).then((res) => {
-          const { type, payload } = res;
-          if (type === "getHostInfo/fulfilled") {
-            const { hostId, hostName, email, phoneNumber, profileImg } =
-              payload.host;
-            setHostInfo({ hostId, hostName, email, phoneNumber, profileImg });
-            setNickname(hostName);
-            setPhoneNumber(phoneNumber);
-            setProfile(profileImg);
-          }
-          // 에러처리
-          else if (type === "getHostInfo/rejected") {
-            alert(`${payload.response.data.errorMessage}`);
-          }
-        })
+        const { type, payload } = res;
+        if (type === "getHostInfo/fulfilled") {
+          const { hostId, hostName, email, phoneNumber, profileImg } =
+            payload.host;
+          setHostInfo({ hostId, hostName, email, phoneNumber, profileImg });
+          setNickname(hostName);
+          setPhoneNumber(phoneNumber);
+          setProfile(profileImg);
+        }
+        // 에러처리
+        else if (type === "getHostInfo/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
+        }
+      })
       : navigate("/signin");
   }, []);
 
@@ -133,6 +134,31 @@ const Hostpage = () => {
     });
   };
 
+  // 회원탈퇴
+  const onDeleteAccount = () => {
+    const password = prompt('비밀번호 입력');
+
+    if (password === "" || password === null) {
+      alert("회원탈퇴를 하시려면 비밀번호를 입력해주세요.");
+      return;
+    }
+
+    if (window.confirm("회원탈퇴를 하시겠습니까?")) {
+      dispatch(__deleteAccount({ hostId, password })).then((res) => {
+        const { type, payload } = res;
+        // 등록 성공
+        if (type === "deleteAccount/fulfilled") {
+          alert(`${payload.message}`);
+          localStorage.clear();
+          window.location.href = "/signup";
+        } // 에러처리
+        else if (type === "deleteAccount/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
+        }
+      })
+    }
+  };
+
   return (
     <>
       <CheckAuth />
@@ -202,6 +228,7 @@ const Hostpage = () => {
                 취소
               </Button>
             </div>
+            <div className="deleteAccount"><span onClick={onDeleteAccount}>회원탈퇴</span></div>
           </ProfileEditForm>
         ) : (
           <p>호스트정보를 찾을 수 없습니다.</p>
@@ -223,6 +250,14 @@ const ProfileEditForm = styled.form`
       border: 1px solid #ff7a50;
       color: #ff7a50;
       margin: 0 5px;
+    }
+  }
+
+  .deleteAccount {
+    margin : 100px 0;
+    span {
+      cursor: pointer;
+      font-size: 15px;
     }
   }
 `;

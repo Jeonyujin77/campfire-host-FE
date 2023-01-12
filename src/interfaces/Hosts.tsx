@@ -34,3 +34,9 @@ export interface HostModifyInfo {
   formData: FormData;
   hostId: number;
 }
+
+// 회원탈퇴
+export interface DeleteHostAccount {
+  hostId: number;
+  password: string;
+}

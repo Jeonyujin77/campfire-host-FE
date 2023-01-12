@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   CompanyCheck,
+  DeleteHostAccount,
   HostInfo,
   HostLogin,
   HostModifyInfo,
@@ -161,5 +162,22 @@ export const __modifyHostInfo = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
+  }
+);
+
+// 회원탙퇴
+export const __deleteAccount = createAsyncThunk(
+  "deleteAccount",
+  async (payload: DeleteHostAccount, thunkAPI) => {
+    const { hostId, password } = payload;
+
+    try {
+      const response = await api.delete(`api/hosts/${hostId}`, {
+        data: { password },
+      });
+      if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {}
   }
 );
