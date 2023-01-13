@@ -94,10 +94,10 @@ const SitesListWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-
+  flex-wrap: wrap;
   .siteInfoBox {
-    width: 23%;
-    margin: 0 10px;
+    width: calc(25% - 20px);
+    margin: 10px;
     .siteRemove {
       color: tomato;
     }
