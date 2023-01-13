@@ -16,3 +16,19 @@ export const __getCampsReservation = createAsyncThunk(
     }
   }
 );
+
+// 예약확정/취소
+export const __toggleCampReserveConfirm = createAsyncThunk(
+  "toggleCampReserveConfirm",
+  async (payload: number, thunkAPI) => {
+    try {
+      const response = await api.put(`/api/books/hosts/${payload}`);
+
+      if (response.status === 201) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);

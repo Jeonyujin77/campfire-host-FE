@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
-import { __getCampsReservation } from "../apis/reservationApi";
+import {
+  __getCampsReservation,
+  __toggleCampReserveConfirm,
+} from "../apis/reservationApi";
 import { __getUserInfo } from "../apis/userApi";
 import CheckAuth from "../components/common/CheckAuth";
 import { useAppDispatch } from "../redux/store";
 import { ReserveInfo } from "../interfaces/Reservations";
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
 import { MODAL_STYLE } from "../constant/camps";
 import { UserInfo } from "../interfaces/Users";
-import Accordion from '@mui/material/Accordion';
+import Accordion from "@mui/material/Accordion";
 import Layout from "../components/layout/Layout";
 import styled from "@emotion/styled";
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const ReserveManange = () => {
   const dispatch = useAppDispatch();
@@ -25,24 +28,48 @@ const ReserveManange = () => {
     dispatch(__getCampsReservation()).then((res) => {
       const { type, payload } = res;
 
-      if (type === 'getCampsReservation/fulfilled') {
+      if (type === "getCampsReservation/fulfilled") {
         setReserveList(payload.books);
       }
-    })
-  }, [dispatch])
+      // 에러처리
+      else if (type === "getCampsReservation/rejected") {
+        alert(`${payload.response.data.errorMessage}`);
+      }
+    });
+  }, [dispatch]);
 
   const handleOpen = (userId: number) => {
     dispatch(__getUserInfo(userId)).then((res) => {
       const { type, payload } = res;
-      if (type === 'getUserInfo/fulfilled') {
+      if (type === "getUserInfo/fulfilled") {
         setUserInfo(payload.user);
         setOpen(true);
       }
-    })
-
+      // 에러처리
+      else if (type === "getUserInfo/rejected") {
+        alert(`${payload.response.data.errorMessage}`);
+      }
+    });
   };
 
   const handleClose = () => setOpen(false);
+
+  // 예약확정/취소
+  const toggleReserveConform = (bookId: number) => {
+    if (window.confirm("예약확정/취소를 하시겠습니까?")) {
+      dispatch(__toggleCampReserveConfirm(bookId)).then((res) => {
+        const { type, payload } = res;
+        if (type === "toggleCampReserveConfirm/fulfilled") {
+          alert(`${payload.message}`);
+          window.location.reload();
+        }
+        // 에러처리
+        else if (type === "toggleCampReserveConfirm/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -63,20 +90,49 @@ const ReserveManange = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <ReserveUserInfo>
-                    <p>체크인&nbsp;&nbsp;-&nbsp;&nbsp;{reserve.checkInDate.split(" ")[0]}&nbsp;{reserve.Camp_checkIn}</p>
-                    <p>체크아웃&nbsp;&nbsp;-&nbsp;&nbsp;{reserve.checkOutDate.split(" ")[0]}&nbsp;{reserve.Camp_checkOut}</p>
-                    <p>인원&nbsp;&nbsp;-&nbsp;&nbsp;성인 {reserve.adults}명 / 아동 {reserve.children}명</p>
-                    <span onClick={() => handleOpen(reserve.userId)} className="link">예약자정보 보기</span>
+                    <p>
+                      체크인&nbsp;&nbsp;-&nbsp;&nbsp;
+                      {reserve.checkInDate.split(" ")[0]}&nbsp;
+                      {reserve.Camp_checkIn}
+                    </p>
+                    <p>
+                      체크아웃&nbsp;&nbsp;-&nbsp;&nbsp;
+                      {reserve.checkOutDate.split(" ")[0]}&nbsp;
+                      {reserve.Camp_checkOut}
+                    </p>
+                    <p>
+                      인원&nbsp;&nbsp;-&nbsp;&nbsp;성인 {reserve.adults}명 /
+                      아동 {reserve.children}명
+                    </p>
+                    <span
+                      onClick={() => handleOpen(reserve.userId)}
+                      className="link"
+                    >
+                      예약자정보 보기
+                    </span>
+                    {!reserve.confirmBook ? (
+                      <span
+                        className="link"
+                        onClick={() => toggleReserveConform(reserve.bookId)}
+                      >
+                        예약확정
+                      </span>
+                    ) : (
+                      <span
+                        className="link"
+                        onClick={() => toggleReserveConform(reserve.bookId)}
+                      >
+                        예약취소
+                      </span>
+                    )}
                   </ReserveUserInfo>
                 </AccordionDetails>
               </Accordion>
-            ))
-            }
+            ))}
           </>
         ) : (
           <p>등록된 캠핑장이 없습니다.</p>
         )}
-
       </Layout>
       <Modal
         open={open}
@@ -84,24 +140,32 @@ const ReserveManange = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={MODAL_STYLE} style={{
-          lineHeight: '1.5',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}>
-          {userInfo !== undefined ? <>
-            <p><Profile src={`${userInfo.profileImg}`} alt="프로필이미지" /></p>
-            <p>예약자 닉네임: {userInfo.userName}</p>
-            <p>예약자 이메일: {userInfo.email}</p>
-            <p>예약자 전화번호: {userInfo.phoneNumber}</p>
-          </> : <>알 수 없는 예약자입니다.</>}
+        <Box
+          sx={MODAL_STYLE}
+          style={{
+            lineHeight: "1.5",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {userInfo !== undefined ? (
+            <>
+              <p>
+                <Profile src={`${userInfo.profileImg}`} alt="프로필이미지" />
+              </p>
+              <p>예약자 닉네임: {userInfo.userName}</p>
+              <p>예약자 이메일: {userInfo.email}</p>
+              <p>예약자 전화번호: {userInfo.phoneNumber}</p>
+            </>
+          ) : (
+            <>알 수 없는 예약자입니다.</>
+          )}
         </Box>
       </Modal>
     </>
   );
 };
-
 
 const ReserveUserInfo = styled.div`
   line-height: 1.5;
@@ -112,6 +176,7 @@ const ReserveUserInfo = styled.div`
     cursor: pointer;
     padding: 20px 0;
     font-size: 14px;
+    margin-right: 10px;
   }
 `;
 
@@ -121,6 +186,6 @@ const Profile = styled.img`
   border-radius: 50px;
   display: block;
   margin-bottom: 20px;
-`
+`;
 
 export default ReserveManange;
