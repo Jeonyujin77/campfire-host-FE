@@ -24,6 +24,9 @@ const CampKeywordMng = () => {
           const { campAmenities, envLists, themeLists, typeLists } =
             payload.camp;
           setKeywordList({ campAmenities, envLists, themeLists, typeLists });
+        } // 에러처리
+        else if (type === "getCampsInfo/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
         }
       });
     }

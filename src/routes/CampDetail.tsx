@@ -26,6 +26,9 @@ const CampDetail = () => {
 
         if (type === "getCampsInfo/fulfilled") {
           setCampInfo(payload.camp);
+        } // 에러처리
+        else if (type === "getCampsInfo/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
         }
       });
     }
