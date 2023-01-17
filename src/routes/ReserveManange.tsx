@@ -92,12 +92,12 @@ const ReserveManange = () => {
                   <ReserveUserInfo>
                     <p>
                       체크인&nbsp;&nbsp;-&nbsp;&nbsp;
-                      {reserve.checkInDate.split(" ")[0]}&nbsp;
+                      {reserve.checkInDate}&nbsp;
                       {reserve.Camp_checkIn}
                     </p>
                     <p>
                       체크아웃&nbsp;&nbsp;-&nbsp;&nbsp;
-                      {reserve.checkOutDate.split(" ")[0]}&nbsp;
+                      {reserve.checkOutDate}&nbsp;
                       {reserve.Camp_checkOut}
                     </p>
                     <p>

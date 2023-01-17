@@ -7,8 +7,9 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
 import CheckAuth from "../common/CheckAuth";
+import { CampListInfo } from "../../interfaces/Camps";
 
-const CampsList = ({ campIdList }: { campIdList: number[] }) => {
+const CampsList = ({ campList }: { campList: CampListInfo[] }) => {
   const dispatch = useAppDispatch();
 
   // 캠핑장 삭제
@@ -33,16 +34,16 @@ const CampsList = ({ campIdList }: { campIdList: number[] }) => {
     <>
       <CheckAuth />
       <CampsListWrapper>
-        {campIdList.length !== 0 ? (
-          campIdList.map((campId) => (
-            <Card className="campInfoBox" key={campId}>
+        {campList.length !== 0 ? (
+          campList.map((camp) => (
+            <Card className="campInfoBox" key={camp.campId}>
               <CardContent>
-                <Link to={`/camps/${campId}`}>캠핑장 {campId}</Link>
+                <Link to={`/camps/${camp.campId}`}>{camp.campName}</Link>
               </CardContent>
               <CardActions>
                 <Button
                   size="small"
-                  onClick={() => onRemoveCamp(campId)}
+                  onClick={() => onRemoveCamp(camp.campId)}
                   className="campRemove"
                 >
                   삭제

@@ -8,11 +8,11 @@ import RegistBasicInfo from "../components/camps/RegistBasicInfo";
 import CampsList from "../components/camps/CampsList";
 import CheckAuth from "../components/common/CheckAuth";
 import TabPanel from "../components/common/TabPanel";
-import useCampIdList from "../hooks/useCampIdList";
+import useCampList from "../hooks/useCampList";
 
 const CampManage = () => {
   const [value, setValue] = useState(0);
-  const campIdList = useCampIdList(); // 호스트 보유 캠핑장 조회
+  const campList = useCampList(); // 호스트 보유 캠핑장 조회
 
   // 탭 변경 이벤트
   const handleChange = useCallback(
@@ -49,7 +49,7 @@ const CampManage = () => {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <CampsList campIdList={campIdList} />
+              <CampsList campList={campList} />
             </TabPanel>
             <TabPanel value={value} index={1}>
               <RegistBasicInfo />

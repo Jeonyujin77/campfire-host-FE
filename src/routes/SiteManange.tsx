@@ -2,10 +2,10 @@ import Layout from "../components/layout/Layout";
 import CheckAuth from "../components/common/CheckAuth";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
-import useCampIdList from "../hooks/useCampIdList";
+import useCampList from "../hooks/useCampList";
 
 const SiteManage = () => {
-  const campIdList = useCampIdList(); // 호스트 보유 캠핑장 조회
+  const campList = useCampList(); // 호스트 보유 캠핑장 조회
 
   return (
     <>
@@ -13,10 +13,10 @@ const SiteManage = () => {
       <Layout>
         <h2>⛺사이트관리</h2>
         <SiteList>
-          {campIdList.length !== 0 ? (
-            campIdList.map((campId) => (
-              <li key={campId}>
-                <Link to={`/site-manage/${campId}`}>캠핑장 {campId}</Link>
+          {campList.length !== 0 ? (
+            campList.map((camp) => (
+              <li key={camp.campId}>
+                <Link to={`/site-manage/${camp.campId}`}>{camp.campName}</Link>
               </li>
             ))
           ) : (

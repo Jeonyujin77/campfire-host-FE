@@ -19,3 +19,9 @@ export interface CampModifyInfo {
   formData: FormData;
   campId: number;
 }
+
+// 캠핑장아이디, 캠핑장명
+export interface CampListInfo {
+  campId: number;
+  campName: string;
+}
