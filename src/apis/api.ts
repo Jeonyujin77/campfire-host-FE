@@ -35,7 +35,7 @@ api.interceptors.response.use(
 
     if (status === 419) {
       localStorage.clear();
-      window.location.href = "/login";
+      window.location.href = "/signin";
     }
     // 요청 오류가 있는 경우 작업 수행
     return Promise.reject(error);
