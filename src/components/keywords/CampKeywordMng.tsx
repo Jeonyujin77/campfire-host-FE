@@ -10,7 +10,7 @@ import KeywordsList from "./KeywordsList";
 const CampKeywordMng = () => {
   const param = useParams();
   const dispatch = useAppDispatch();
-  const { campId } = param;
+  const { campId, campName } = param;
 
   const [keywordList, setKeywordList] = useState<KeywordsInfo>();
 
@@ -36,7 +36,7 @@ const CampKeywordMng = () => {
     <>
       <CheckAuth />
       <Layout>
-        <h2>⛺키워드관리</h2>
+        <h2>⛺키워드관리 [{campName}]</h2>
         {keywordList !== undefined && campId !== undefined ? (
           <KeywordsList keywordList={keywordList} campId={campId} />
         ) : (

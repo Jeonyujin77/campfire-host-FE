@@ -16,7 +16,9 @@ const SiteManage = () => {
           {campList.length !== 0 ? (
             campList.map((camp) => (
               <li key={camp.campId}>
-                <Link to={`/site-manage/${camp.campId}`}>{camp.campName}</Link>
+                <Link to={`/site-manage/${camp.campId}/${camp.campName}`}>
+                  {camp.campName}
+                </Link>
               </li>
             ))
           ) : (

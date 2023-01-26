@@ -8,9 +8,12 @@ import Box from "@mui/material/Box";
 import TabPanel from "../common/TabPanel";
 import SitesList from "./SitesList";
 import RegistSiteInfo from "./RegistSiteInfo";
+import { useParams } from "react-router-dom";
 
 const CampSitesMng = () => {
+  const param = useParams();
   const [value, setValue] = useState(0);
+  const { campName } = param;
 
   // 탭 변경 이벤트
   const handleChange = useCallback(
@@ -32,7 +35,7 @@ const CampSitesMng = () => {
     <>
       <CheckAuth />
       <Layout>
-        <h2>⛺사이트관리</h2>
+        <h2>⛺사이트관리 [{campName}]</h2>
         <CampInfoTab>
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

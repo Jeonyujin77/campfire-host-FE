@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   __checkCompany,
@@ -34,7 +34,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // 이메일
   const [nickname, setNickname] = useState(""); // 닉네임
-  const [password, setPassword, passwordHandler] = useInput(""); // 비밀번호
+  const [password, setPassword] = useState(""); // 비밀번호
   const [passwordCheck, setPasswordCheck, passwordCheckHandler] = useInput(""); // 비밀번호 재확인
   const [brandName, setBrandName, brandNameHandler] = useInput(""); // 업체명
   const [compNum, setCompNum] = useState(""); // 사업자번호
@@ -56,16 +56,16 @@ const Signup = () => {
   const [compNumChkFlag, setCompNumChkFlag] = useState(false); // 사업자번호확인 flag
 
   // 패스워드 유효성 검사
-  const onBlurPasswordCheck = () => {
+  const onBlurPasswordCheck = useCallback(() => {
     if (password !== passwordCheck) {
       setPwChkValidFlag(false);
     } else {
       setPwChkValidFlag(true);
     }
-  };
+  }, [password, passwordCheck]);
 
   // 이메일 중복검사
-  const checkEmailDup = () => {
+  const checkEmailDup = useCallback(() => {
     if (email === "") return;
 
     dispatch(__checkEmailDup(email)).then((res) => {
@@ -75,18 +75,13 @@ const Signup = () => {
         alert(`${payload.message}`);
       } else if (type === "checkEmailDup/rejected") {
         setEmailDupFlag(false);
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 412
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        alert(`${payload.response.data.errorMessage}`);
       }
     });
-  };
+  }, [dispatch, email]);
 
   // 닉네임 중복검사
-  const checkNickDup = () => {
+  const checkNickDup = useCallback(() => {
     if (nickname === "") return;
 
     dispatch(__checkNickDup(nickname)).then((res) => {
@@ -96,18 +91,13 @@ const Signup = () => {
         alert(`${payload.message}`);
       } else if (type === "checkNickDup/rejected") {
         setNickDupFlag(false);
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 412
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        alert(`${payload.response.data.errorMessage}`);
       }
     });
-  };
+  }, [dispatch, nickname]);
 
   // 사업자번호 확인
-  const checkCompNum = () => {
+  const checkCompNum = useCallback(() => {
     if (brandName === "" || compNum === "") return;
 
     dispatch(__checkCompany({ brandName, companyNumber: compNum })).then(
@@ -122,66 +112,103 @@ const Signup = () => {
         }
       }
     );
-  };
+  }, [dispatch, brandName, compNum]);
 
   // 이메일 변경 시
-  const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const emailHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setEmailDupFlag(false);
-  };
+  }, []);
 
   // 닉네임 변경 시
-  const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
-    setNickDupFlag(false);
-  };
+  const nicknameHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNickname(e.target.value);
+      setNickDupFlag(false);
+    },
+    []
+  );
+
+  // 비밀번호 변경 시
+  const passwordHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+      setPasswordCheck("");
+      setPwChkValidFlag(false);
+    },
+    []
+  );
 
   // 사업자번호 변경 시
-  const compNumHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCompNum(e.target.value);
-    setCompNumChkFlag(false);
-  };
+  const compNumHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCompNum(e.target.value);
+      setCompNumChkFlag(false);
+    },
+    []
+  );
 
   // 회원가입
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    // 입력값 검증 및 중복확인이 정상이면
-    if (
-      emailValidFlag &&
-      emailDupFlag &&
-      nickValidFlag &&
-      nickDupFlag &&
-      pwValidFlag &&
-      pwChkValidFlag &&
-      compNumChkFlag &&
-      compNumValidFlag &&
-      telValidFlag
-    ) {
-      const hostInfo = {
-        email,
-        hostName: nickname,
-        password,
-        brandName,
-        companyNumber: compNum,
-        phoneNumber: telNum,
-      };
-      dispatch(__signup(hostInfo)).then((res) => {
-        const { type, payload } = res;
-        if (type === "signup/fulfilled") {
-          alert(`${payload.message}`);
-          navigate("/signin");
-        } else if (
-          type === "signup/rejected" &&
-          payload.response.status === 400
-        ) {
-          alert(`${payload.response.data.errorMessage}`);
-        }
-      });
-    } else {
-      alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
-    }
-  };
+      // 입력값 검증 및 중복확인이 정상이면
+      if (
+        emailValidFlag &&
+        emailDupFlag &&
+        nickValidFlag &&
+        nickDupFlag &&
+        pwValidFlag &&
+        pwChkValidFlag &&
+        compNumChkFlag &&
+        compNumValidFlag &&
+        telValidFlag
+      ) {
+        const hostInfo = {
+          email,
+          hostName: nickname,
+          password,
+          brandName,
+          companyNumber: compNum,
+          phoneNumber: telNum,
+        };
+        dispatch(__signup(hostInfo)).then((res) => {
+          const { type, payload } = res;
+          if (type === "signup/fulfilled") {
+            alert(`${payload.message}`);
+            navigate("/signin");
+          } else if (
+            type === "signup/rejected" &&
+            payload.response.status === 400
+          ) {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        });
+      } else {
+        alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
+      }
+    },
+    [
+      brandName,
+      compNum,
+      compNumChkFlag,
+      compNumValidFlag,
+      dispatch,
+      email,
+      emailDupFlag,
+      emailValidFlag,
+      navigate,
+      nickDupFlag,
+      nickValidFlag,
+      nickname,
+      password,
+      pwChkValidFlag,
+      pwValidFlag,
+      telNum,
+      telValidFlag,
+    ]
+  );
 
   return (
     <SignupWrapper>

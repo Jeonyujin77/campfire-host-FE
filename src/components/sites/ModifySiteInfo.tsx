@@ -5,16 +5,16 @@ import Button from "@mui/material/Button";
 import { IMG_TYPES } from "../../constant/camps";
 import { SiteInfoProps } from "../../interfaces/Sites";
 import { useAppDispatch } from "../../redux/store";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import CheckAuth from "../common/CheckAuth";
 import Input from "../common/Input";
 import useInput from "../../hooks/useInput";
 import { onUploadImage, onUploadMultipleImage } from "../../utils/CampsUtil";
 import { __modifySitesInfo } from "../../apis/siteApi";
+import { useNavigate } from "react-router-dom";
 
 const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
-  const formData = new FormData();
   const [siteMainImgPrev, setSiteMainImgPrev] = useState<
     string | ArrayBuffer | null
   >(""); // 대표사진 미리보기
@@ -23,6 +23,7 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   >([]); // 추가사진 미리보기
   // --------------------------------사이트기본정보---------------------------------------------------
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [siteName, setSiteName, siteNameHandler] = useInput(siteInfo.siteName); // 사이트명
   const [sitePrice, setSitePrice, sitePriceHandler] = useInput(
     siteInfo.sitePrice
@@ -46,56 +47,70 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   ); // 업체추가사진
 
   // 대표 사진 업로드
-  const onUploadSiteMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadImage(e, setSiteMainImgPrev, setSiteMainImage);
-  };
+  const onUploadSiteMainImg = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadImage(e, setSiteMainImgPrev, setSiteMainImage);
+    },
+    []
+  );
 
   // 추가 사진 업로드
-  const onUploadSiteSubImgs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadMultipleImage(e, setSiteSubImgPrevs, setSiteSubImages);
-  };
+  const onUploadSiteSubImgs = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadMultipleImage(e, setSiteSubImgPrevs, setSiteSubImages);
+    },
+    []
+  );
 
   // 사이트정보 수정
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const campId = siteInfo.campId;
-    const siteId = siteInfo.siteId;
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = new FormData();
+      const campId = siteInfo.campId;
+      const siteId = siteInfo.siteId;
 
-    // console.log("----------------------------------------------");
-    // console.log("사이트명: ", siteName);
-    // console.log("가격: ", sitePrice);
-    // console.log("사이트정보: ", siteInform);
-    // console.log("사이트소개: ", siteDesc);
-    // console.log("대표사진: ", siteMainImage);
-    // console.log("추가사진: ", siteSubImages);
-    // console.log("최소인원: ", minPeople);
-    // console.log("최대인원: ", maxPeople);
-
-    formData.append("siteName", siteName);
-    formData.append("siteDesc", siteDesc);
-    formData.append("siteInfo", siteInform);
-    formData.append("sitePrice", sitePrice);
-    formData.append("siteMainImage", siteMainImage);
-    for (let i = 0; i < siteSubImages.length; i++) {
-      formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
-    }
-    formData.append("minPeople", minPeople);
-    formData.append("maxPeople", maxPeople);
-    formData.append("roomCount", roomCount);
-
-    dispatch(__modifySitesInfo({ campId, siteId, formData })).then((res) => {
-      const { type, payload } = res;
-      // 등록 성공
-      if (type === "modifySitesInfo/fulfilled") {
-        alert(`${payload.message}`);
-        window.location.reload();
+      formData.append("siteName", siteName);
+      formData.append("siteDesc", siteDesc);
+      formData.append("siteInfo", siteInform);
+      formData.append("sitePrice", sitePrice);
+      formData.append("siteMainImage", siteMainImage);
+      for (let i = 0; i < siteSubImages.length; i++) {
+        formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
       }
-      // 에러처리
-      else if (type === "modifySitesInfo/rejected") {
-        alert(`${payload.response.data.errorMessage}`);
-      }
-    });
-  };
+      formData.append("minPeople", minPeople);
+      formData.append("maxPeople", maxPeople);
+      formData.append("roomCount", roomCount);
+
+      dispatch(__modifySitesInfo({ campId, siteId, formData })).then((res) => {
+        const { type, payload } = res;
+        // 등록 성공
+        if (type === "modifySitesInfo/fulfilled") {
+          alert(`${payload.message}`);
+          navigate(0);
+        }
+        // 에러처리
+        else if (type === "modifySitesInfo/rejected") {
+          alert(`${payload.response.data.errorMessage}`);
+        }
+      });
+    },
+    [
+      dispatch,
+      navigate,
+      maxPeople,
+      minPeople,
+      roomCount,
+      siteDesc,
+      siteInfo.campId,
+      siteInfo.siteId,
+      siteInform,
+      siteMainImage,
+      siteName,
+      sitePrice,
+      siteSubImages,
+    ]
+  );
 
   return (
     <>

@@ -22,10 +22,16 @@ function App() {
         <Route path="/camp-manage" element={<CampManage />} />
         <Route path="/camps/:campId" element={<CampDetail />} />
         <Route path="/site-manage" element={<SiteManage />} />
-        <Route path="/site-manage/:campId" element={<CampSitesMng />} />
+        <Route
+          path="/site-manage/:campId/:campName"
+          element={<CampSitesMng />}
+        />
         <Route path="/sites/:campId/:siteId" element={<SiteDetail />} />
         <Route path="/keyword-manage" element={<KeywordManage />} />
-        <Route path="/keyword-manage/:campId" element={<CampKeywordMng />} />
+        <Route
+          path="/keyword-manage/:campId/:campName"
+          element={<CampKeywordMng />}
+        />
         <Route path="/hostpage" element={<Hostpage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />

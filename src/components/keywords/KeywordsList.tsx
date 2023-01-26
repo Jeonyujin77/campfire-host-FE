@@ -1,6 +1,6 @@
 import CheckAuth from "../common/CheckAuth";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import styled from "@emotion/styled";
 import { KeywordsInfo } from "../../interfaces/Keywords";
 import {
@@ -42,33 +42,44 @@ const KeywordsList = ({
   ); // 테마
 
   // 부대시설 체크박스
-  const onAmenitiesChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChecked(e, amenities, setAmenities);
-  };
+  const onAmenitiesChecked = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChecked(e, amenities, setAmenities);
+    },
+    [amenities]
+  );
 
   // 자연환경 체크박스
-  const onEnvsChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChecked(e, envs, setEnvs);
-  };
+  const onEnvsChecked = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChecked(e, envs, setEnvs);
+    },
+    [envs]
+  );
 
   // 테마 체크박스
-  const onThemesChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChecked(e, themes, setThemes);
-  };
+  const onThemesChecked = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChecked(e, themes, setThemes);
+    },
+    [themes]
+  );
 
   // 숙소유형 체크박스
-  const onTypesChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChecked(e, types, setTypes);
-  };
+  const onTypesChecked = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChecked(e, types, setTypes);
+    },
+    [types]
+  );
 
   // 부대시설 키워드 수정
-  const onModifyCampAmenities = () => {
+  const onModifyCampAmenities = useCallback(() => {
     dispatch(__modifyCampAmenities({ campId, keywordList: amenities })).then(
       (res) => {
         const { type, payload } = res;
         // 등록 성공
         if (type === "modifyCampAmenities/fulfilled") {
-          navigate(0);
           alert(`${payload.message}`);
         }
         // 에러처리
@@ -77,15 +88,14 @@ const KeywordsList = ({
         }
       }
     );
-  };
+  }, [amenities, campId, dispatch]);
 
   // 자연환경 키워드 수정
-  const onModifyCampEnvs = () => {
+  const onModifyCampEnvs = useCallback(() => {
     dispatch(__modifyCampEnvs({ campId, keywordList: envs })).then((res) => {
       const { type, payload } = res;
       // 등록 성공
       if (type === "modifyCampEnvs/fulfilled") {
-        navigate(0);
         alert(`${payload.message}`);
       }
       // 에러처리
@@ -93,16 +103,15 @@ const KeywordsList = ({
         alert(`${payload.response.data.errorMessage}`);
       }
     });
-  };
+  }, [envs, campId, dispatch]);
 
   // 테마 키워드 수정
-  const onModifyCampThemes = () => {
+  const onModifyCampThemes = useCallback(() => {
     dispatch(__modifyCampThemes({ campId, keywordList: themes })).then(
       (res) => {
         const { type, payload } = res;
         // 등록 성공
         if (type === "modifyCampThemes/fulfilled") {
-          navigate(0);
           alert(`${payload.message}`);
         }
         // 에러처리
@@ -111,15 +120,14 @@ const KeywordsList = ({
         }
       }
     );
-  };
+  }, [themes, campId, dispatch]);
 
   // 숙소유형 키워드 수정
-  const onModifyCampTypes = () => {
+  const onModifyCampTypes = useCallback(() => {
     dispatch(__modifyCampTypes({ campId, keywordList: types })).then((res) => {
       const { type, payload } = res;
       // 등록 성공
       if (type === "modifyCampTypes/fulfilled") {
-        navigate(0);
         alert(`${payload.message}`);
       }
       // 에러처리
@@ -127,7 +135,7 @@ const KeywordsList = ({
         alert(`${payload.response.data.errorMessage}`);
       }
     });
-  };
+  }, [campId, dispatch, types]);
 
   return (
     <div style={{ margin: "20px 0" }}>

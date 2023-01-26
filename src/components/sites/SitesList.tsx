@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -37,26 +37,29 @@ const SitesList = () => {
   }, []);
 
   // 캠핑장 삭제
-  const onRemoveSite = (siteId: number) => {
-    if (window.confirm("삭제하시겠습니까?")) {
-      if (campId !== undefined) {
-        dispatch(__deleteSitesInfo({ campId, siteId: siteId.toString() })).then(
-          (res) => {
+  const onRemoveSite = useCallback(
+    (siteId: number) => {
+      if (window.confirm("삭제하시겠습니까?")) {
+        if (campId !== undefined) {
+          dispatch(
+            __deleteSitesInfo({ campId, siteId: siteId.toString() })
+          ).then((res) => {
             const { type, payload } = res;
             // 삭제 성공
             if (type === "deleteSitesInfo/fulfilled") {
               alert("캠핑장 사이트가 삭제되었습니다.");
-              window.location.reload();
+              navigate(0);
             }
             // 에러처리
             else if (type === "deleteSitesInfo/rejected") {
               alert(`${payload.response.data.errorMessage}`);
             }
-          }
-        );
+          });
+        }
       }
-    }
-  };
+    },
+    [campId, dispatch, navigate]
+  );
 
   return (
     <>

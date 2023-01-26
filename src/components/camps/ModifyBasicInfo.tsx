@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
@@ -7,13 +8,12 @@ import Input from "../common/Input";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import DaumPostcode from "react-daum-postcode";
-import { useState } from "react";
-import { AMENITIES_LIST, IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
+import { useState, useCallback } from "react";
+import { IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import useInput from "../../hooks/useInput";
 import {
   convertURLtoFile,
   handleComplete,
-  // onAmenitiesChecked,
   onUploadImage,
   onUploadMultipleImage,
 } from "../../utils/CampsUtil";
@@ -41,9 +41,6 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
     campInfo.campSubImages
   ); // 업체추가사진
   const [campDesc, setCampDesc, campDescHandler] = useInput(campInfo.campDesc); // 업체소개
-  // const [campAmenities, setCampAmenities] = useState<String[]>([
-  //   ...campInfo.campAmenities,
-  // ]); // 부대시설
   const [checkIn, setCheckIn, checkInHandler] = useInput(campInfo.checkIn); // 체크인
   const [checkOut, setCheckOut, checkOutHandler] = useInput(campInfo.checkOut); // 체크아웃
   // -------------------------------주소찾기팝업-----------------------------------------------
@@ -52,26 +49,27 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   const handleClose = () => setOpen(false); // 팝업 close
 
   // 대표 사진 업로드
-  const onUploadCampMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadImage(e, setCampMainImgPrev, setCampMainImage);
-  };
+  const onUploadCampMainImg = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadImage(e, setCampMainImgPrev, setCampMainImage);
+    },
+    []
+  );
 
   // 추가 사진 업로드
-  const onUploadCampSubImgs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadMultipleImage(e, setCampSubImgPrevs, setCampSubImages);
-  };
-
-  // 부대시설 체크
-  // const onElementChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   onAmenitiesChecked(e, campAmenities, setCampAmenities);
-  // };
+  const onUploadCampSubImgs = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadMultipleImage(e, setCampSubImgPrevs, setCampSubImages);
+    },
+    []
+  );
 
   // 주소 검색
-  const onCompletePostSearch = (data: any) => {
+  const onCompletePostSearch = useCallback((data: any) => {
     const fullAddress = handleComplete(data);
     setCampAddress(fullAddress);
     setOpen(false);
-  };
+  }, []);
 
   const appendConvertedFile = async () => {
     if (typeof campMainImage === "string") {
@@ -90,43 +88,52 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
       }
     }
   };
+
   // 캠핑장 기본정보 수정
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (campAddress === "") {
-      alert("주소를 입력하세요.");
-      return;
-    }
+      if (campAddress === "") {
+        alert("주소를 입력하세요.");
+        return;
+      }
 
-    const campId = campInfo.campId;
+      const campId = campInfo.campId;
 
-    //formData 형식으로 보냄
-    appendConvertedFile().then(() => {
-      formData.append("campName", campName);
-      formData.append("campAddress", campAddress);
-      formData.append("campDesc", campDesc.trim());
-      // formData.append(
-      //   "campAmenities",
-      //   JSON.stringify(campAmenities).replace(/[\[\]"]/g, "")
-      // );
-      formData.append("checkIn", checkIn);
-      formData.append("checkOut", checkOut);
+      //formData 형식으로 보냄
+      appendConvertedFile().then(() => {
+        formData.append("campName", campName);
+        formData.append("campAddress", campAddress);
+        formData.append("campDesc", campDesc.trim());
+        formData.append("checkIn", checkIn);
+        formData.append("checkOut", checkOut);
 
-      dispatch(__modifyCampsInfo({ campId, formData })).then((res) => {
-        const { type, payload } = res;
-        // 등록 성공
-        if (type === "modifyCampsInfo/fulfilled") {
-          alert(`${payload.message}`);
-          window.location.reload();
-        }
-        // 에러처리
-        else if (type === "modifyCampsInfo/rejected") {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+        dispatch(__modifyCampsInfo({ campId, formData })).then((res) => {
+          const { type, payload } = res;
+          // 등록 성공
+          if (type === "modifyCampsInfo/fulfilled") {
+            alert(`${payload.message}`);
+            window.location.reload();
+          }
+          // 에러처리
+          else if (type === "modifyCampsInfo/rejected") {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        });
       });
-    });
-  };
+    },
+    [
+      appendConvertedFile,
+      campAddress,
+      campDesc,
+      campInfo.campId,
+      campName,
+      checkIn,
+      checkOut,
+      dispatch,
+    ]
+  );
 
   return (
     <>
@@ -241,22 +248,6 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             />
           </Data>
         </Row>
-        {/* <Row>
-        <Label>부대시설</Label>
-        <Data>
-          {AMENITIES_LIST.map((item) => (
-            <label key={item.id}>
-              <input
-                type="checkbox"
-                value={item.data}
-                checked={campAmenities.includes(item.data) ? true : false}
-                onChange={onElementChecked}
-              />
-              {item.data}
-            </label>
-          ))}
-        </Data>
-      </Row> */}
         <Row>
           <Label htmlFor="check-in">입실/퇴실시간</Label>
           <Data>

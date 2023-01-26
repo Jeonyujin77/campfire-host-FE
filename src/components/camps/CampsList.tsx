@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { __deleteCampsInfo } from "../../apis/campApi";
 import { useAppDispatch } from "../../redux/store";
 import Card from "@mui/material/Card";
@@ -8,27 +8,32 @@ import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
 import CheckAuth from "../common/CheckAuth";
 import { CampListInfo } from "../../interfaces/Camps";
+import { useCallback } from "react";
 
 const CampsList = ({ campList }: { campList: CampListInfo[] }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // 캠핑장 삭제
-  const onRemoveCamp = (campId: number) => {
-    if (window.confirm("삭제하시겠습니까?")) {
-      dispatch(__deleteCampsInfo(campId)).then((res) => {
-        const { type, payload } = res;
-        // 등록 성공
-        if (type === "deleteCampsInfo/fulfilled") {
-          alert(`${payload.message}`);
-          window.location.reload();
-        }
-        // 에러처리
-        else if (type === "deleteCampsInfo/rejected") {
-          alert(`${payload.response.data.errorMessage}`);
-        }
-      });
-    }
-  };
+  const onRemoveCamp = useCallback(
+    (campId: number) => {
+      if (window.confirm("삭제하시겠습니까?")) {
+        dispatch(__deleteCampsInfo(campId)).then((res) => {
+          const { type, payload } = res;
+          // 등록 성공
+          if (type === "deleteCampsInfo/fulfilled") {
+            alert(`${payload.message}`);
+            navigate(0);
+          }
+          // 에러처리
+          else if (type === "deleteCampsInfo/rejected") {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        });
+      }
+    },
+    [dispatch, navigate]
+  );
 
   return (
     <>

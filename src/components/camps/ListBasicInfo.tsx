@@ -39,14 +39,6 @@ const ListBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             <Text>{campInfo.campDesc}</Text>
           </Data>
         </Row>
-        {/* <Row>
-        <Label>부대시설</Label>
-        <Data>
-          {campInfo.campAmenities.map((item, idx) => (
-            <p key={`${item} ${idx}`}>{item}</p>
-          ))}
-        </Data>
-      </Row> */}
         <Row>
           <Label htmlFor="check-in">입실/퇴실시간</Label>
           <Data>

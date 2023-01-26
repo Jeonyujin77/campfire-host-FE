@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import useInput from "../../hooks/useInput";
 import Input from "../common/Input";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { IMG_TYPES } from "../../constant/camps";
 import { onUploadImage, onUploadMultipleImage } from "../../utils/CampsUtil";
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,59 +36,72 @@ const RegistSiteInfo = () => {
   const [roomCount, setRoomCount, roomCountHandler] = useInput(3); // 일별이용가능객실수
 
   // 대표 사진 업로드
-  const onUploadSiteMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadImage(e, setCampMainImgPrev, setSiteMainImage);
-  };
+  const onUploadSiteMainImg = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadImage(e, setCampMainImgPrev, setSiteMainImage);
+    },
+    []
+  );
 
   // 추가 사진 업로드
-  const onUploadSiteSubImgs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUploadMultipleImage(e, setCampSubImgPrevs, setSiteSubImages);
-  };
+  const onUploadSiteSubImgs = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onUploadMultipleImage(e, setCampSubImgPrevs, setSiteSubImages);
+    },
+    []
+  );
 
   // 사이트정보등록
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // console.log("----------------------------------------------");
-    // console.log("사이트명: ", siteName);
-    // console.log("사이트정보: ", siteInfo);
-    // console.log("사이트소개: ", siteDesc);
-    // console.log("사이트가격: ", sitePrice);
-    // console.log("최소인원수: ", minPeople);
-    // console.log("최대인원수: ", maxPeople);
-    // console.log("사이트대표사진: ", siteMainImage);
-    // console.log("사이트서브사진: ", siteSubImages);
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    const formData = new FormData();
-    //formData 형식으로 보냄
-    formData.append("siteName", siteName);
-    formData.append("siteInfo", siteInfo);
-    formData.append("siteDesc", siteDesc);
-    formData.append("sitePrice", sitePrice);
-    formData.append("minPeople", minPeople);
-    formData.append("maxPeople", maxPeople);
-    formData.append("siteMainImage", siteMainImage);
-    formData.append("roomCount", roomCount);
+      const formData = new FormData();
+      //formData 형식으로 보냄
+      formData.append("siteName", siteName);
+      formData.append("siteInfo", siteInfo);
+      formData.append("siteDesc", siteDesc);
+      formData.append("sitePrice", sitePrice);
+      formData.append("minPeople", minPeople);
+      formData.append("maxPeople", maxPeople);
+      formData.append("siteMainImage", siteMainImage);
+      formData.append("roomCount", roomCount);
 
-    for (let i = 0; i < siteSubImages.length; i++) {
-      formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
-    }
-
-    dispatch(__registSitesInfo({ campId: Number(campId), formData })).then(
-      (res) => {
-        const { type, payload } = res;
-
-        // 등록 성공
-        if (type === "registSitesInfo/fulfilled") {
-          navigate(-1);
-          alert(`${payload.message}`);
-        }
-        // 에러처리
-        else if (type === "registSitesInfo/rejected") {
-          alert(`${payload.response.data.errorMessage}`);
-        }
+      for (let i = 0; i < siteSubImages.length; i++) {
+        formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
       }
-    );
-  };
+
+      dispatch(__registSitesInfo({ campId: Number(campId), formData })).then(
+        (res) => {
+          const { type, payload } = res;
+
+          // 등록 성공
+          if (type === "registSitesInfo/fulfilled") {
+            navigate(0);
+            alert(`${payload.message}`);
+          }
+          // 에러처리
+          else if (type === "registSitesInfo/rejected") {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        }
+      );
+    },
+    [
+      campId,
+      dispatch,
+      maxPeople,
+      minPeople,
+      navigate,
+      roomCount,
+      siteDesc,
+      siteInfo,
+      siteMainImage,
+      siteName,
+      sitePrice,
+      siteSubImages,
+    ]
+  );
 
   return (
     <>

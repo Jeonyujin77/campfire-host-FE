@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import Layout from "../components/layout/Layout";
 import Tabs from "@mui/material/Tabs";

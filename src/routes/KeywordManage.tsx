@@ -16,7 +16,7 @@ const KeywordManage = () => {
           {campList.length !== 0 ? (
             campList.map((camp) => (
               <li key={camp.campId}>
-                <Link to={`/keyword-manage/${camp.campId}`}>
+                <Link to={`/keyword-manage/${camp.campId}/${camp.campName}`}>
                   {camp.campName}
                 </Link>
               </li>

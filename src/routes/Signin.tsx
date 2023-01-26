@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
 import { Button, Paper } from "@mui/material";
-import React from "react";
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { __signin } from "../apis/hostApi";
 import Input from "../components/common/Input";
@@ -13,24 +13,21 @@ const Signin = () => {
   const [email, setEmail, emailHandler] = useInput("");
   const [password, setPassword, passwordHandler] = useInput("");
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(__signin({ email, password })).then((res) => {
-      const { type, payload } = res;
-      if (type === "signin/fulfilled") {
-        alert("로그인에 성공하였습니다.");
-        window.location.href = "/";
-      } else if (type === "signin/rejected") {
-        if (
-          payload.response.status === 400 ||
-          payload.response.status === 412 ||
-          payload.response.status === 419
-        ) {
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      dispatch(__signin({ email, password })).then((res) => {
+        const { type, payload } = res;
+        if (type === "signin/fulfilled") {
+          alert("로그인에 성공하였습니다.");
+          window.location.href = "/";
+        } else if (type === "signin/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
-      }
-    });
-  };
+      });
+    },
+    [dispatch, email, password]
+  );
 
   return (
     <SigninWrapper>
