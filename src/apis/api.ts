@@ -31,9 +31,13 @@ api.interceptors.response.use(
     return config;
   },
   function (error) {
-    const { status } = error.response;
+    const { status, data } = error.response;
 
-    if (status === 419) {
+    if (
+      status === 419 ||
+      data.errorMessage ===
+        "RefreshToken이 조작되었습니다. 다시 로그인해주세요."
+    ) {
       localStorage.clear();
       window.location.href = "/signin";
     }

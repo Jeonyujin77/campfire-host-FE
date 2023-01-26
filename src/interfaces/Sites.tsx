@@ -36,4 +36,5 @@ export interface SiteInfoProps {
   siteInfo: string;
   siteMainImage: string;
   siteSubImages: string[];
+  roomCount: number;
 }

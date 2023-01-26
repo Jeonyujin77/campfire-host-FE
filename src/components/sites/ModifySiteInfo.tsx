@@ -37,6 +37,9 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   const [maxPeople, setMaxPeople, maxPeopleHandler] = useInput(
     siteInfo.maxPeople
   ); // 최대인원
+  const [roomCount, setRoomCount, roomCountHandler] = useInput(
+    siteInfo.roomCount
+  ); // 일별이용가능객실수
   const [siteMainImage, setSiteMainImage] = useState<string | Blob | File>(""); // 업체대표사진
   const [siteSubImages, setSiteSubImages] = useState<(string | Blob | File)[]>(
     []
@@ -78,6 +81,7 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
     }
     formData.append("minPeople", minPeople);
     formData.append("maxPeople", maxPeople);
+    formData.append("roomCount", roomCount);
 
     dispatch(__modifySitesInfo({ campId, siteId, formData })).then((res) => {
       const { type, payload } = res;
@@ -215,6 +219,18 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
               type="number"
               value={maxPeople}
               onChange={maxPeopleHandler}
+              required
+            />
+          </Data>
+        </Row>
+        <Row>
+          <Label>일별이용가능객실수</Label>
+          <Data>
+            <Input
+              width="300px"
+              type="number"
+              value={roomCount}
+              onChange={roomCountHandler}
               required
             />
           </Data>

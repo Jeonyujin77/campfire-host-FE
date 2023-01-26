@@ -57,6 +57,12 @@ const ListSiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             <p>{siteInfo.maxPeople}명</p>
           </Data>
         </Row>
+        <Row>
+          <Label>일별이용가능객실수</Label>
+          <Data>
+            <p>{siteInfo.roomCount}</p>
+          </Data>
+        </Row>
       </div>
     </>
   );

@@ -30,9 +30,10 @@ const RegistSiteInfo = () => {
   const [siteName, setSiteName, siteNameHandler] = useInput(""); // 사이트명
   const [siteInfo, setSiteInfo, siteInfoHandler] = useInput(""); // 사이트정보
   const [siteDesc, setSiteDesc, siteDescHandler] = useInput(""); // 사이트소개
-  const [sitePrice, setSitePrice, sitePriceHandler] = useInput(0); // 사이트가격
-  const [minPeople, setMinPeople, minPeopleHandler] = useInput(0); // 최소인원수
-  const [maxPeople, setMaxPeople, maxPeopleHandler] = useInput(0); // 최대인원수
+  const [sitePrice, setSitePrice, sitePriceHandler] = useInput(50000); // 사이트가격
+  const [minPeople, setMinPeople, minPeopleHandler] = useInput(2); // 최소인원수
+  const [maxPeople, setMaxPeople, maxPeopleHandler] = useInput(2); // 최대인원수
+  const [roomCount, setRoomCount, roomCountHandler] = useInput(3); // 일별이용가능객실수
 
   // 대표 사진 업로드
   const onUploadSiteMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,8 @@ const RegistSiteInfo = () => {
     formData.append("minPeople", minPeople);
     formData.append("maxPeople", maxPeople);
     formData.append("siteMainImage", siteMainImage);
+    formData.append("roomCount", roomCount);
+
     for (let i = 0; i < siteSubImages.length; i++) {
       formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
     }
@@ -202,6 +205,16 @@ const RegistSiteInfo = () => {
             type="number"
             value={maxPeople}
             onChange={maxPeopleHandler}
+            required
+          />
+        </Row>
+        <Row>
+          <Label>일별이용가능객실수</Label>
+          <Input
+            width="300px"
+            type="number"
+            value={roomCount}
+            onChange={roomCountHandler}
             required
           />
         </Row>
