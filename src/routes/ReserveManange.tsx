@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   __getCampsReservation,
   __toggleCampReserveConfirm,
@@ -38,38 +38,45 @@ const ReserveManange = () => {
     });
   }, [dispatch]);
 
-  const handleOpen = (userId: number) => {
-    dispatch(__getUserInfo(userId)).then((res) => {
-      const { type, payload } = res;
-      if (type === "getUserInfo/fulfilled") {
-        setUserInfo(payload.user);
-        setOpen(true);
-      }
-      // 에러처리
-      else if (type === "getUserInfo/rejected") {
-        alert(`${payload.response.data.errorMessage}`);
-      }
-    });
-  };
-
-  const handleClose = () => setOpen(false);
-
-  // 예약확정/취소
-  const toggleReserveConform = (bookId: number) => {
-    if (window.confirm("예약확정/취소를 하시겠습니까?")) {
-      dispatch(__toggleCampReserveConfirm(bookId)).then((res) => {
+  const handleOpen = useCallback(
+    (userId: number) => {
+      dispatch(__getUserInfo(userId)).then((res) => {
         const { type, payload } = res;
-        if (type === "toggleCampReserveConfirm/fulfilled") {
-          alert(`${payload.message}`);
-          window.location.reload();
+        if (type === "getUserInfo/fulfilled") {
+          setUserInfo(payload.user);
+          setOpen(true);
         }
         // 에러처리
-        else if (type === "toggleCampReserveConfirm/rejected") {
+        else if (type === "getUserInfo/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
       });
-    }
-  };
+    },
+    [dispatch]
+  );
+
+  // 예약자정보확인팝업닫기
+  const handleClose = () => setOpen(false);
+
+  // 예약확정/취소
+  const toggleReserveConform = useCallback(
+    (bookId: number) => {
+      if (window.confirm("예약확정/취소를 하시겠습니까?")) {
+        dispatch(__toggleCampReserveConfirm(bookId)).then((res) => {
+          const { type, payload } = res;
+          if (type === "toggleCampReserveConfirm/fulfilled") {
+            alert(`${payload.message}`);
+            window.location.reload();
+          }
+          // 에러처리
+          else if (type === "toggleCampReserveConfirm/rejected") {
+            alert(`${payload.response.data.errorMessage}`);
+          }
+        });
+      }
+    },
+    [dispatch]
+  );
 
   return (
     <>
