@@ -8,10 +8,11 @@ import Input from "../common/Input";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import DaumPostcode from "react-daum-postcode";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import useInput from "../../hooks/useInput";
 import {
+  campGeocoder,
   convertURLtoFile,
   handleComplete,
   onUploadImage,
@@ -43,10 +44,19 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   const [campDesc, setCampDesc, campDescHandler] = useInput(campInfo.campDesc); // 업체소개
   const [checkIn, setCheckIn, checkInHandler] = useInput(campInfo.checkIn); // 체크인
   const [checkOut, setCheckOut, checkOutHandler] = useInput(campInfo.checkOut); // 체크아웃
+  const [campLat, setCampLat] = useState(""); // 캠핑장위도
+  const [campLng, setCampLng] = useState(""); // 캠핑장경도
   // -------------------------------주소찾기팝업-----------------------------------------------
   const [open, setOpen] = useState(false); // 팝업 display
   const handleOpen = () => setOpen(true); // 팝업 open
   const handleClose = () => setOpen(false); // 팝업 close
+
+  // 주소를 위도, 경도로 변환
+  useEffect(() => {
+    if (campAddress !== "" && campAddress !== undefined) {
+      campGeocoder(campAddress, setCampLat, setCampLng);
+    }
+  }, [campAddress]);
 
   // 대표 사진 업로드
   const onUploadCampMainImg = useCallback(
@@ -105,6 +115,8 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
       appendConvertedFile().then(() => {
         formData.append("campName", campName);
         formData.append("campAddress", campAddress);
+        formData.append("mapX", campLng);
+        formData.append("mapY", campLat);
         formData.append("campDesc", campDesc.trim());
         formData.append("checkIn", checkIn);
         formData.append("checkOut", checkOut);

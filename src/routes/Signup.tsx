@@ -227,17 +227,6 @@ const Guide = styled.span`
   padding: 10px 0;
 `;
 
-const Dupchk = styled.span`
-  display: inline-block;
-  height: 32px;
-  cursor: pointer;
-  color: tomato;
-  font-size: 14px;
-  margin-left: 10px;
-  vertical-align: middle;
-  line-height: 32px;
-`;
-
 const GoToLogin = styled.p`
   padding: 20px 0;
   font-size: 14px;

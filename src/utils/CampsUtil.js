@@ -118,3 +118,18 @@ export const convertURLtoFile = async (url) => {
   const metadata = { type: `image/${ext}` };
   return new File([data], filename, metadata);
 };
+
+// 주소를 위도, 경도로 변환
+export const campGeocoder = (address, setterlat, setterlng) => {
+  // 주소-좌표 변환 객체를 생성합니다
+  const geocoder = new window.kakao.maps.services.Geocoder();
+
+  // 주소로 좌표를 검색합니다
+  geocoder.addressSearch(address, function (result, status) {
+    // 정상적으로 검색이 완료됐으면
+    if (status === window.kakao.maps.services.Status.OK) {
+      setterlat(result[0].y);
+      setterlng(result[0].x);
+    }
+  });
+};

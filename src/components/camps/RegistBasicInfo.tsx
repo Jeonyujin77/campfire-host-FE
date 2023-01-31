@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
@@ -12,6 +12,7 @@ import { IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import { useAppDispatch } from "../../redux/store";
 import { __registCampsInfo } from "../../apis/campApi";
 import {
+  campGeocoder,
   handleComplete,
   onUploadImage,
   onUploadMultipleImage,
@@ -38,6 +39,8 @@ const RegistBasicInfo = () => {
   const [campDesc, setCampDesc, campDescHandler] = useInput(""); // 업체소개
   const [checkIn, setCheckIn, checkInHandler] = useInput(""); // 체크인
   const [checkOut, setCheckOut, checkOutHandler] = useInput(""); // 체크아웃
+  const [campLat, setCampLat] = useState(""); // 캠핑장위도
+  const [campLng, setCampLng] = useState(""); // 캠핑장경도
   // -------------------------------주소찾기팝업-----------------------------------------------
   const [open, setOpen] = useState(false); // 팝업 display
   const handleOpen = () => setOpen(true); // 팝업 open
@@ -66,24 +69,28 @@ const RegistBasicInfo = () => {
     setOpen(false);
   }, []);
 
+  // 주소를 위도, 경도로 변환
+  useEffect(() => {
+    if (campAddress !== "" && campAddress !== undefined) {
+      campGeocoder(campAddress, setCampLat, setCampLng);
+    }
+  }, [campAddress]);
+
   // 캠핑장 기본정보 등록
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      if (campAddress === "") {
-        alert("주소를 입력하세요.");
-        return;
-      }
-
       const formData = new FormData();
-      //formData 형식으로 보냄
+      // //formData 형식으로 보냄
       formData.append("campMainImage", campMainImage);
       for (let i = 0; i < campSubImages.length; i++) {
         formData.append(`campSubImages`, campSubImages[i], `campSubImages${i}`);
       }
       formData.append("campName", campName);
       formData.append("campAddress", campAddress);
+      formData.append("mapX", campLng);
+      formData.append("mapY", campLat);
       formData.append("campDesc", campDesc.trim());
       formData.append("checkIn", checkIn);
       formData.append("checkOut", checkOut);
@@ -104,6 +111,8 @@ const RegistBasicInfo = () => {
     },
     [
       campAddress,
+      campLat,
+      campLng,
       campDesc,
       campMainImage,
       campName,
