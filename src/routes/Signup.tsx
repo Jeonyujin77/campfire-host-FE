@@ -1,33 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  __checkCompany,
-  __checkEmailDup,
-  __checkNickDup,
-  __signup,
-} from "../apis/hostApi";
 import Input from "../components/common/Input";
-import {
-  COMPNUM_NOT_VALID,
-  EMAIL_NOT_VALID,
-  NICK_NOT_VALID,
-  PWCHK_NOT_VALID,
-  PW_NOT_VALID,
-  TELNUM_NOT_VALID,
-} from "../constant/message";
+import CompNumInput from "../components/hosts/CompNumInput";
+import CompTelInput from "../components/hosts/CompTelInput";
+import EmailInput from "../components/hosts/EmailInput";
+import NicknameInput from "../components/hosts/NicknameInput";
+import { PWCHK_NOT_VALID, PW_NOT_VALID } from "../constant/message";
 import useInput from "../hooks/useInput";
 import useInputValid from "../hooks/useInputValid";
 import { useAppDispatch } from "../redux/store";
-import {
-  compNumValid,
-  emailValid,
-  nicknameValid,
-  pwValid,
-  telValid,
-} from "../utils/RegExp";
+import { pwValid } from "../utils/RegExp";
+import { __signup } from "../apis/hostApi";
 
 const Signup = () => {
   const dispatch = useAppDispatch();
@@ -38,22 +23,13 @@ const Signup = () => {
   const [passwordCheck, setPasswordCheck, passwordCheckHandler] = useInput(""); // 비밀번호 재확인
   const [brandName, setBrandName, brandNameHandler] = useInput(""); // 업체명
   const [compNum, setCompNum] = useState(""); // 사업자번호
-  const [telNum, setTelNum, telNumHandler] = useInput(""); // 전화번호
-  const [emailValidFlag, emailFlagHandler] = useInputValid(email, emailValid); // 이메일검증 flag
-  const [nickValidFlag, nickFlagHandler] = useInputValid(
-    nickname,
-    nicknameValid
-  ); // 닉네임검증 flag
+  const [telNum, setTelNum] = useState(""); // 전화번호
   const [pwValidFlag, pwFlagHandler] = useInputValid(password, pwValid); // 비밀번호검증 flag
-  const [compNumValidFlag, setCompNumValidFlag] = useInputValid(
-    compNum,
-    compNumValid
-  ); // 사업자번호검증 flag
-  const [telValidFlag, setTelValidFlag] = useInputValid(telNum, telValid); // 전화번호검증 flag
   const [pwChkValidFlag, setPwChkValidFlag] = useState(true); // 비밀번호 재확인검증 flag
   const [emailDupFlag, setEmailDupFlag] = useState(false); // 이메일중복확인 flag
   const [nickDupFlag, setNickDupFlag] = useState(false); // 닉네임중복확인 flag
   const [compNumChkFlag, setCompNumChkFlag] = useState(false); // 사업자번호확인 flag
+  const [certifiStatus, setCertifiStatus] = useState(false); //인증유무 상태 flag
 
   // 패스워드 유효성 검사
   const onBlurPasswordCheck = useCallback(() => {
@@ -63,71 +39,6 @@ const Signup = () => {
       setPwChkValidFlag(true);
     }
   }, [password, passwordCheck]);
-
-  // 이메일 중복검사
-  const checkEmailDup = useCallback(() => {
-    if (email === "") return;
-
-    dispatch(__checkEmailDup(email)).then((res) => {
-      const { type, payload } = res;
-      if (type === "checkEmailDup/fulfilled") {
-        setEmailDupFlag(true);
-        alert(`${payload.message}`);
-      } else if (type === "checkEmailDup/rejected") {
-        setEmailDupFlag(false);
-        alert(`${payload.response.data.errorMessage}`);
-      }
-    });
-  }, [dispatch, email]);
-
-  // 닉네임 중복검사
-  const checkNickDup = useCallback(() => {
-    if (nickname === "") return;
-
-    dispatch(__checkNickDup(nickname)).then((res) => {
-      const { type, payload } = res;
-      if (type === "checkNickDup/fulfilled") {
-        setNickDupFlag(true);
-        alert(`${payload.message}`);
-      } else if (type === "checkNickDup/rejected") {
-        setNickDupFlag(false);
-        alert(`${payload.response.data.errorMessage}`);
-      }
-    });
-  }, [dispatch, nickname]);
-
-  // 사업자번호 확인
-  const checkCompNum = useCallback(() => {
-    if (brandName === "" || compNum === "") return;
-
-    dispatch(__checkCompany({ brandName, companyNumber: compNum })).then(
-      (res) => {
-        const { type, payload } = res;
-        if (type === "checkCompany/fulfilled") {
-          setCompNumChkFlag(true);
-          alert(`${payload.message}`);
-        } else if (type === "checkCompany/rejected") {
-          setCompNumChkFlag(false);
-          alert(`${payload.response.data.errorMessage}`);
-        }
-      }
-    );
-  }, [dispatch, brandName, compNum]);
-
-  // 이메일 변경 시
-  const emailHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    setEmailDupFlag(false);
-  }, []);
-
-  // 닉네임 변경 시
-  const nicknameHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setNickname(e.target.value);
-      setNickDupFlag(false);
-    },
-    []
-  );
 
   // 비밀번호 변경 시
   const passwordHandler = useCallback(
@@ -139,31 +50,37 @@ const Signup = () => {
     []
   );
 
-  // 사업자번호 변경 시
-  const compNumHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setCompNum(e.target.value);
-      setCompNumChkFlag(false);
-    },
-    []
-  );
-
   // 회원가입
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
+      /* console.log("------------------------------");
+      console.log("emailDupFlag: ", emailDupFlag);
+      console.log("nickDupFlag", nickDupFlag);
+      console.log("pwValidFlag", pwValidFlag);
+      console.log("pwChkValidFlag", pwChkValidFlag);
+      console.log("compNumChkFlag", compNumChkFlag);
+      console.log("certifiStatus", certifiStatus);
+      console.log("email", email);
+      console.log("nickname", nickname);
+      console.log("password", password);
+      console.log("brandName", brandName);
+      console.log("compNum", compNum);
+      console.log("telNum", telNum); */
+
+      // 인증번호 미확인 시
+      if (!certifiStatus) {
+        alert("인증번호 확인을 해주세요.");
+        return;
+      }
       // 입력값 검증 및 중복확인이 정상이면
       if (
-        emailValidFlag &&
-        emailDupFlag &&
-        nickValidFlag &&
-        nickDupFlag &&
         pwValidFlag &&
         pwChkValidFlag &&
-        compNumChkFlag &&
-        compNumValidFlag &&
-        telValidFlag
+        emailDupFlag &&
+        nickDupFlag &&
+        compNumChkFlag
       ) {
         const hostInfo = {
           email,
@@ -187,26 +104,24 @@ const Signup = () => {
         });
       } else {
         alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
+        return;
       }
     },
     [
-      brandName,
-      compNum,
       compNumChkFlag,
-      compNumValidFlag,
-      dispatch,
-      email,
       emailDupFlag,
-      emailValidFlag,
-      navigate,
       nickDupFlag,
-      nickValidFlag,
-      nickname,
-      password,
       pwChkValidFlag,
       pwValidFlag,
+      certifiStatus,
+      brandName,
+      compNum,
+      email,
+      nickname,
+      password,
       telNum,
-      telValidFlag,
+      dispatch,
+      navigate,
     ]
   );
 
@@ -214,34 +129,16 @@ const Signup = () => {
     <SignupWrapper>
       <SignupHeader>Camp-Fire</SignupHeader>
       <SignupForm onSubmit={onSubmit}>
-        <FormGrp>
-          <label>이메일</label>
-          <Input
-            type="email"
-            width="380px"
-            height="30px"
-            required
-            value={email}
-            onChange={emailHandler}
-            onBlur={emailFlagHandler}
-          />
-          <Dupchk onClick={checkEmailDup}>중복확인</Dupchk>
-          {!emailValidFlag ? <Guide>{EMAIL_NOT_VALID}</Guide> : <></>}
-        </FormGrp>
-        <FormGrp>
-          <label>닉네임</label>
-          <Input
-            type="text"
-            width="380px"
-            height="30px"
-            required
-            value={nickname}
-            onChange={nicknameHandler}
-            onBlur={nickFlagHandler}
-          />
-          <Dupchk onClick={checkNickDup}>중복확인</Dupchk>
-          {!nickValidFlag ? <Guide>{NICK_NOT_VALID}</Guide> : <></>}
-        </FormGrp>
+        <EmailInput
+          email={email}
+          setEmail={setEmail}
+          setEmailDupFlag={setEmailDupFlag}
+        />
+        <NicknameInput
+          nickname={nickname}
+          setNickname={setNickname}
+          setNickDupFlag={setNickDupFlag}
+        />
         <FormGrp>
           <label>비밀번호</label>
           <Input
@@ -268,44 +165,19 @@ const Signup = () => {
           />
           {!pwChkValidFlag ? <Guide>{PWCHK_NOT_VALID}</Guide> : <></>}
         </FormGrp>
-        <FormGrp>
-          <label>업체명</label>
-          <Input
-            type="text"
-            width="460px"
-            height="30px"
-            required
-            value={brandName}
-            onChange={brandNameHandler}
-          />
-        </FormGrp>
-        <FormGrp>
-          <label>사업자번호</label>
-          <Input
-            type="text"
-            width="370px"
-            height="30px"
-            required
-            value={compNum}
-            onChange={compNumHandler}
-            onBlur={setCompNumValidFlag}
-          />
-          <Dupchk onClick={checkCompNum}>사업자확인</Dupchk>
-          {!compNumValidFlag ? <Guide>{COMPNUM_NOT_VALID}</Guide> : <></>}
-        </FormGrp>
-        <FormGrp>
-          <label>전화번호</label>
-          <Input
-            type="tel"
-            width="460px"
-            height="30px"
-            required
-            value={telNum}
-            onChange={telNumHandler}
-            onBlur={setTelValidFlag}
-          />
-          {!telValidFlag ? <Guide>{TELNUM_NOT_VALID}</Guide> : <></>}
-        </FormGrp>
+        <CompNumInput
+          compNum={compNum}
+          setCompNum={setCompNum}
+          brandName={brandName}
+          brandNameHandler={brandNameHandler}
+          setCompNumChkFlag={setCompNumChkFlag}
+        />
+        <CompTelInput
+          telNum={telNum}
+          setTelNum={setTelNum}
+          certifiStatus={certifiStatus}
+          setCertifiStatus={setCertifiStatus}
+        />
         <Button variant="contained" type="submit" className="signupBtn">
           가입하기
         </Button>
