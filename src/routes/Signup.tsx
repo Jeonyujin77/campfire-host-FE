@@ -95,10 +95,7 @@ const Signup = () => {
           if (type === "signup/fulfilled") {
             alert(`${payload.message}`);
             navigate("/signin");
-          } else if (
-            type === "signup/rejected" &&
-            payload.response.status === 400
-          ) {
+          } else if (type === "signup/rejected") {
             alert(`${payload.response.data.errorMessage}`);
           }
         });
