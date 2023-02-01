@@ -210,6 +210,7 @@ const Hostpage = () => {
                 onChange={phoneNumberHandler}
                 onBlur={telFlagHandler}
                 required
+                readOnly
               />
               {!telValidFlag ? <Guide>{TELNUM_NOT_VALID}</Guide> : <></>}
             </Row>

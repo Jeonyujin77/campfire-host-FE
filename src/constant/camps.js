@@ -44,7 +44,9 @@ export const TYPE_LIST = [
   { id: "TYPE4", data: "방갈로" },
   { id: "TYPE5", data: "게스트하우스" },
   { id: "TYPE6", data: "펜션" },
-  { id: "TYPE7", data: "기타" },
+  { id: "TYPE7", data: "일반야영장" },
+  { id: "TYPE8", data: "자동차야영장" },
+  { id: "TYPE9", data: "기타" },
 ];
 
 // 다음주소API-모달스타일
