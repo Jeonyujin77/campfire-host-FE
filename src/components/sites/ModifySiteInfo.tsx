@@ -12,6 +12,7 @@ import useInput from "../../hooks/useInput";
 import { onUploadImage, onUploadMultipleImage } from "../../utils/CampsUtil";
 import { __modifySitesInfo } from "../../apis/siteApi";
 import { useNavigate } from "react-router-dom";
+import ReactGa from "react-ga";
 
 const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
@@ -50,6 +51,10 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   const onUploadSiteMainImg = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadImage(e, setSiteMainImgPrev, setSiteMainImage);
+      ReactGa.event({
+        category: "사이트관리-사이트수정",
+        action: "캠핑장사이트 대표사진 업로드 시도",
+      });
     },
     []
   );
@@ -58,6 +63,10 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   const onUploadSiteSubImgs = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadMultipleImage(e, setSiteSubImgPrevs, setSiteSubImages);
+      ReactGa.event({
+        category: "사이트관리-사이트수정",
+        action: "캠핑장사이트 추가사진 업로드 시도",
+      });
     },
     []
   );
@@ -93,6 +102,11 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
         else if (type === "modifySitesInfo/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
+      });
+
+      ReactGa.event({
+        category: "사이트관리-사이트수정",
+        action: "캠핑장사이트수정 시도",
       });
     },
     [

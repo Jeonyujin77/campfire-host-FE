@@ -21,6 +21,7 @@ import {
 import { useAppDispatch } from "../../redux/store";
 import { __modifyCampsInfo } from "../../apis/campApi";
 import CheckAuth from "../common/CheckAuth";
+import ReactGa from "react-ga";
 
 const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
@@ -62,6 +63,10 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   const onUploadCampMainImg = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadImage(e, setCampMainImgPrev, setCampMainImage);
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장수정",
+        action: "캠핑장 대표사진 업로드 시도",
+      });
     },
     []
   );
@@ -70,6 +75,10 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   const onUploadCampSubImgs = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadMultipleImage(e, setCampSubImgPrevs, setCampSubImages);
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장수정",
+        action: "캠핑장 추가사진 업로드 시도",
+      });
     },
     []
   );
@@ -79,6 +88,10 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
     const fullAddress = handleComplete(data);
     setCampAddress(fullAddress);
     setOpen(false);
+    ReactGa.event({
+      category: "캠핑장관리-캠핑장수정",
+      action: "캠핑장 주소검색 시도",
+    });
   }, []);
 
   const appendConvertedFile = async () => {
@@ -133,6 +146,11 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             alert(`${payload.response.data.errorMessage}`);
           }
         });
+      });
+
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장수정",
+        action: "캠핑장수정 시도",
       });
     },
     [

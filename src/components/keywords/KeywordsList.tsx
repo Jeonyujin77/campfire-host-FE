@@ -17,6 +17,7 @@ import {
   __modifyCampThemes,
   __modifyCampTypes,
 } from "../../apis/campApi";
+import ReactGa from "react-ga";
 
 const KeywordsList = ({
   keywordList,
@@ -45,6 +46,10 @@ const KeywordsList = ({
   const onAmenitiesChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChecked(e, amenities, setAmenities);
+      ReactGa.event({
+        category: "키워드관리",
+        action: "부대시설 키워드 체크 시도",
+      });
     },
     [amenities]
   );
@@ -53,6 +58,10 @@ const KeywordsList = ({
   const onEnvsChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChecked(e, envs, setEnvs);
+      ReactGa.event({
+        category: "키워드관리",
+        action: "자연환경 키워드 체크 시도",
+      });
     },
     [envs]
   );
@@ -61,6 +70,10 @@ const KeywordsList = ({
   const onThemesChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChecked(e, themes, setThemes);
+      ReactGa.event({
+        category: "키워드관리",
+        action: "테마 키워드 체크 시도",
+      });
     },
     [themes]
   );
@@ -69,6 +82,10 @@ const KeywordsList = ({
   const onTypesChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChecked(e, types, setTypes);
+      ReactGa.event({
+        category: "키워드관리",
+        action: "숙소유형 키워드 체크 시도",
+      });
     },
     [types]
   );
@@ -88,6 +105,10 @@ const KeywordsList = ({
         }
       }
     );
+    ReactGa.event({
+      category: "키워드관리",
+      action: "부대시설 키워드 수정 시도",
+    });
   }, [amenities, campId, dispatch]);
 
   // 자연환경 키워드 수정
@@ -102,6 +123,10 @@ const KeywordsList = ({
       else if (type === "modifyCampEnvs/rejected") {
         alert(`${payload.response.data.errorMessage}`);
       }
+    });
+    ReactGa.event({
+      category: "키워드관리",
+      action: "자연환경 키워드 수정 시도",
     });
   }, [envs, campId, dispatch]);
 
@@ -120,6 +145,10 @@ const KeywordsList = ({
         }
       }
     );
+    ReactGa.event({
+      category: "키워드관리",
+      action: "테마 키워드 수정 시도",
+    });
   }, [themes, campId, dispatch]);
 
   // 숙소유형 키워드 수정
@@ -134,6 +163,10 @@ const KeywordsList = ({
       else if (type === "modifyCampTypes/rejected") {
         alert(`${payload.response.data.errorMessage}`);
       }
+    });
+    ReactGa.event({
+      category: "키워드관리",
+      action: "숙소유형 키워드 수정 시도",
     });
   }, [campId, dispatch, types]);
 

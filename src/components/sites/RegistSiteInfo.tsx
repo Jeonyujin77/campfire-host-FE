@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
 import { __registSitesInfo } from "../../apis/siteApi";
 import CheckAuth from "../common/CheckAuth";
+import ReactGa from "react-ga";
 
 const RegistSiteInfo = () => {
   const param = useParams();
@@ -39,6 +40,10 @@ const RegistSiteInfo = () => {
   const onUploadSiteMainImg = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadImage(e, setCampMainImgPrev, setSiteMainImage);
+      ReactGa.event({
+        category: "사이트관리-사이트등록",
+        action: "캠핑장사이트 대표사진 업로드 시도",
+      });
     },
     []
   );
@@ -47,6 +52,10 @@ const RegistSiteInfo = () => {
   const onUploadSiteSubImgs = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadMultipleImage(e, setCampSubImgPrevs, setSiteSubImages);
+      ReactGa.event({
+        category: "사이트관리-사이트등록",
+        action: "캠핑장사이트 추가사진 업로드 시도",
+      });
     },
     []
   );
@@ -86,6 +95,11 @@ const RegistSiteInfo = () => {
           }
         }
       );
+
+      ReactGa.event({
+        category: "사이트관리-사이트등록",
+        action: "캠핑장사이트등록 시도",
+      });
     },
     [
       campId,

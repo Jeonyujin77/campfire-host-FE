@@ -7,6 +7,7 @@ import { __signin } from "../apis/hostApi";
 import Input from "../components/common/Input";
 import useInput from "../hooks/useInput";
 import { useAppDispatch } from "../redux/store";
+import ReactGa from "react-ga";
 
 const Signin = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +25,11 @@ const Signin = () => {
         } else if (type === "signin/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
+      });
+
+      ReactGa.event({
+        category: "로그인",
+        action: "로그인 시도",
       });
     },
     [dispatch, email, password]

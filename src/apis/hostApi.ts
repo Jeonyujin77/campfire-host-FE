@@ -68,7 +68,7 @@ export const __getCertifiNum = createAsyncThunk(
   "getCertifiNum",
   async (payload: string, thunkAPI) => {
     try {
-      const response = await api.get(`/api/auths/sms/${payload}`);
+      const response = await api.get(`/api/hosts/sms/${payload}`);
 
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
@@ -84,7 +84,7 @@ export const __certifiTest = createAsyncThunk(
   "certifiTest",
   async (payload: any, thunkAPI) => {
     try {
-      const response = await api.post(`/api/auths/sms/verify`, payload);
+      const response = await api.post(`/api/hosts/sms/verify`, payload);
       if (response.status === 201) {
         return thunkAPI.fulfillWithValue(response.data);
       }

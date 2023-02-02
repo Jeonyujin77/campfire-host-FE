@@ -17,6 +17,7 @@ import styled from "@emotion/styled";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ReactGa from "react-ga";
 
 const ReserveManange = () => {
   const dispatch = useAppDispatch();
@@ -51,6 +52,11 @@ const ReserveManange = () => {
           alert(`${payload.response.data.errorMessage}`);
         }
       });
+
+      ReactGa.event({
+        category: "예약관리",
+        action: "예약자정보조회 시도",
+      });
     },
     [dispatch]
   );
@@ -74,6 +80,11 @@ const ReserveManange = () => {
           }
         });
       }
+
+      ReactGa.event({
+        category: "예약관리",
+        action: "예약확정/취소 시도",
+      });
     },
     [dispatch]
   );

@@ -6,6 +6,7 @@ import useInputValid from "../../hooks/useInputValid";
 import { useAppDispatch } from "../../redux/store";
 import { compNumValid } from "../../utils/RegExp";
 import Input from "../common/Input";
+import ReactGa from "react-ga";
 
 const CompNumInput = ({
   compNum,
@@ -51,6 +52,11 @@ const CompNumInput = ({
         }
       }
     );
+
+    ReactGa.event({
+      category: "회원가입",
+      action: "사업자등록번호 검증 시도",
+    });
   }, [dispatch, brandName, compNum, setCompNumChkFlag]);
 
   return (

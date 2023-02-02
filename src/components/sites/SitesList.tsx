@@ -9,6 +9,7 @@ import styled from "@emotion/styled";
 import { __deleteSitesInfo, __getSiteList } from "../../apis/siteApi";
 import { Site } from "../../interfaces/Sites";
 import CheckAuth from "../common/CheckAuth";
+import ReactGa from "react-ga";
 
 const SitesList = () => {
   const dispatch = useAppDispatch();
@@ -57,6 +58,10 @@ const SitesList = () => {
           });
         }
       }
+      ReactGa.event({
+        category: "사이트관리",
+        action: "캠핑장사이트삭제 시도",
+      });
     },
     [campId, dispatch, navigate]
   );

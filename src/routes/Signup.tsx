@@ -13,6 +13,7 @@ import useInputValid from "../hooks/useInputValid";
 import { useAppDispatch } from "../redux/store";
 import { pwValid } from "../utils/RegExp";
 import { __signup } from "../apis/hostApi";
+import ReactGa from "react-ga";
 
 const Signup = () => {
   const dispatch = useAppDispatch();
@@ -103,6 +104,11 @@ const Signup = () => {
         alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
         return;
       }
+
+      ReactGa.event({
+        category: "회원가입",
+        action: "회원가입 시도",
+      });
     },
     [
       compNumChkFlag,

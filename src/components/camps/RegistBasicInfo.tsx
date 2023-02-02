@@ -19,6 +19,7 @@ import {
 } from "../../utils/CampsUtil";
 import { useNavigate } from "react-router-dom";
 import CheckAuth from "../common/CheckAuth";
+import ReactGa from "react-ga";
 
 const RegistBasicInfo = () => {
   const [campMainImgPrev, setCampMainImgPrev] = useState<
@@ -50,6 +51,10 @@ const RegistBasicInfo = () => {
   const onUploadCampMainImg = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadImage(e, setCampMainImgPrev, setCampMainImage);
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장등록",
+        action: "캠핑장 대표사진 업로드 시도",
+      });
     },
     []
   );
@@ -58,6 +63,10 @@ const RegistBasicInfo = () => {
   const onUploadCampSubImgs = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadMultipleImage(e, setCampSubImgPrevs, setCampSubImages);
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장등록",
+        action: "캠핑장 추가사진 업로드 시도",
+      });
     },
     []
   );
@@ -67,6 +76,10 @@ const RegistBasicInfo = () => {
     const fullAddress = handleComplete(data);
     setCampAddress(fullAddress);
     setOpen(false);
+    ReactGa.event({
+      category: "캠핑장관리-캠핑장등록",
+      action: "캠핑장 주소검색 시도",
+    });
   }, []);
 
   // 주소를 위도, 경도로 변환
@@ -107,6 +120,11 @@ const RegistBasicInfo = () => {
         else if (type === "registCampsInfo/rejected") {
           alert(`${payload.response.data.errorMessage}`);
         }
+      });
+
+      ReactGa.event({
+        category: "캠핑장관리-캠핑장등록",
+        action: "캠핑장등록 시도",
       });
     },
     [

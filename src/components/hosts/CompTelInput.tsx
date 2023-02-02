@@ -7,6 +7,7 @@ import { useAppDispatch } from "../../redux/store";
 import { telValid } from "../../utils/RegExp";
 import Input from "../common/Input";
 import greenChecked from "../../asset/greenChecked.png";
+import ReactGa from "react-ga";
 
 const CompTelInput = ({
   telNum,
@@ -50,6 +51,11 @@ const CompTelInput = ({
         alert(`${payload.response.data.errorMessage}`);
       }
     });
+
+    ReactGa.event({
+      category: "회원가입",
+      action: "인증번호 발송 시도",
+    });
   };
 
   //인증번호 검증
@@ -73,6 +79,11 @@ const CompTelInput = ({
         setGetCertifiStatus(false);
         setCertifiNum("");
       }
+    });
+
+    ReactGa.event({
+      category: "회원가입",
+      action: "인증번호 검증 시도",
     });
   };
 

@@ -6,6 +6,7 @@ import useInputValid from "../../hooks/useInputValid";
 import { useAppDispatch } from "../../redux/store";
 import { nicknameValid } from "../../utils/RegExp";
 import Input from "../common/Input";
+import ReactGa from "react-ga";
 
 const NicknameInput = ({
   nickname,
@@ -44,6 +45,11 @@ const NicknameInput = ({
         setNickDupFlag(false);
         alert(`${payload.response.data.errorMessage}`);
       }
+    });
+
+    ReactGa.event({
+      category: "회원가입",
+      action: "닉네임 중복검사 시도",
     });
   }, [dispatch, nickname, setNickDupFlag]);
 

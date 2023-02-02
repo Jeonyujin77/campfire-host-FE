@@ -13,12 +13,12 @@ import { useNavigate } from "react-router-dom";
 import { HostFullInfo } from "../interfaces/Hosts";
 import styled from "@emotion/styled";
 import Input from "../components/common/Input";
-import useInput from "../hooks/useInput";
 import useInputValid from "../hooks/useInputValid";
-import { nicknameValid, telValid } from "../utils/RegExp";
-import { NICK_NOT_VALID, TELNUM_NOT_VALID } from "../constant/message";
+import { nicknameValid } from "../utils/RegExp";
+import { NICK_NOT_VALID } from "../constant/message";
 import { IMG_TYPES } from "../constant/camps";
 import { onUploadImage } from "../utils/CampsUtil";
+import ReactGa from "react-ga";
 
 const Hostpage = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ const Hostpage = () => {
   const hostId = Number(localStorage.getItem("hostId"));
   const [hostInfo, setHostInfo] = useState<HostFullInfo>();
   const [nickname, setNickname] = useState(""); // 닉네임
-  const [phoneNumber, setPhoneNumber, phoneNumberHandler] = useInput(""); // 전화번호
+  const [phoneNumber, setPhoneNumber] = useState(""); // 전화번호
   const [profilePrev, setProfilePrev] = useState<string | ArrayBuffer | null>(
     ""
   ); // 프로필 미리보기
@@ -35,7 +35,6 @@ const Hostpage = () => {
     nickname,
     nicknameValid
   ); // 닉네임검증 flag
-  const [telValidFlag, telFlagHandler] = useInputValid(phoneNumber, telValid); // 전화번호검증 flag
   const [nickDupFlag, setNickDupFlag] = useState(true); // 닉네임중복확인 flag
 
   // 페이지 로드 시 호스트 정보 조회
@@ -82,12 +81,20 @@ const Hostpage = () => {
         alert(`${payload.response.data.errorMessage}`);
       }
     });
+    ReactGa.event({
+      category: "프로필편집",
+      action: "닉네임 중복검사 시도",
+    });
   }, [dispatch, nickname]);
 
   // 프로필이미지업로드
   const onUploadProfileImg = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUploadImage(e, setProfilePrev, setProfile);
+      ReactGa.event({
+        category: "프로필편집",
+        action: "프로필이미지 업로드 시도",
+      });
     },
     []
   );
@@ -117,10 +124,6 @@ const Hostpage = () => {
         alert("닉네임 형식을 확인해주세요.");
         return;
       }
-      if (!telValidFlag) {
-        alert("전화번호 형식을 확인해주세요.");
-        return;
-      }
 
       const formData = new FormData();
       //formData 형식으로 보냄
@@ -139,6 +142,11 @@ const Hostpage = () => {
           alert(`${payload.response.data.errorMessage}`);
         }
       });
+
+      ReactGa.event({
+        category: "프로필편집",
+        action: "프로필수정시도",
+      });
     },
     [
       checkNicknameChange,
@@ -150,7 +158,6 @@ const Hostpage = () => {
       nickname,
       phoneNumber,
       profile,
-      telValidFlag,
     ]
   );
 
@@ -178,6 +185,11 @@ const Hostpage = () => {
         }
       });
     }
+
+    ReactGa.event({
+      category: "프로필편집",
+      action: "회원탈퇴 시도",
+    });
   }, [dispatch, hostId]);
 
   return (
@@ -203,16 +215,7 @@ const Hostpage = () => {
             </Row>
             <Row>
               <Label>전화번호</Label>
-              <Input
-                width="400px"
-                type="tel"
-                value={phoneNumber}
-                onChange={phoneNumberHandler}
-                onBlur={telFlagHandler}
-                required
-                readOnly
-              />
-              {!telValidFlag ? <Guide>{TELNUM_NOT_VALID}</Guide> : <></>}
+              <p>{phoneNumber}</p>
             </Row>
             <Row>
               <Label>프로필이미지</Label>

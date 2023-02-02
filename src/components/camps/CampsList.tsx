@@ -9,6 +9,7 @@ import styled from "@emotion/styled";
 import CheckAuth from "../common/CheckAuth";
 import { CampListInfo } from "../../interfaces/Camps";
 import { useCallback } from "react";
+import ReactGa from "react-ga";
 
 const CampsList = ({ campList }: { campList: CampListInfo[] }) => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,10 @@ const CampsList = ({ campList }: { campList: CampListInfo[] }) => {
           }
         });
       }
+      ReactGa.event({
+        category: "캠핑장관리",
+        action: "캠핑장삭제 시도",
+      });
     },
     [dispatch, navigate]
   );

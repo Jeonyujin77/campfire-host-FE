@@ -6,6 +6,7 @@ import useInputValid from "../../hooks/useInputValid";
 import { useAppDispatch } from "../../redux/store";
 import { emailValid } from "../../utils/RegExp";
 import Input from "../common/Input";
+import ReactGa from "react-ga";
 
 const EmailInput = ({
   email,
@@ -40,6 +41,11 @@ const EmailInput = ({
         setEmailDupFlag(false);
         alert(`${payload.response.data.errorMessage}`);
       }
+    });
+
+    ReactGa.event({
+      category: "회원가입",
+      action: "이메일 중복검사 시도",
     });
   }, [dispatch, email, setEmailDupFlag]);
 
