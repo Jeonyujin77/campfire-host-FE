@@ -25,6 +25,7 @@ const Hostpage = () => {
   const navigate = useNavigate();
   const hostId = Number(localStorage.getItem("hostId"));
   const [hostInfo, setHostInfo] = useState<HostFullInfo>();
+  const [originNickname, setOriginNickname] = useState(""); // 변경전 닉네임
   const [nickname, setNickname] = useState(""); // 닉네임
   const [phoneNumber, setPhoneNumber] = useState(""); // 전화번호
   const [profilePrev, setProfilePrev] = useState<string | ArrayBuffer | null>(
@@ -46,6 +47,7 @@ const Hostpage = () => {
             const { hostId, hostName, email, phoneNumber, profileImg } =
               payload.host;
             setHostInfo({ hostId, hostName, email, phoneNumber, profileImg });
+            setOriginNickname(hostName);
             setNickname(hostName);
             setPhoneNumber(phoneNumber);
             setProfile(profileImg);
@@ -208,9 +210,12 @@ const Hostpage = () => {
                 value={nickname}
                 onChange={nicknameHandler}
                 onBlur={nickFlagHandler}
-                required
               />
-              <Dupchk onClick={checkNickDup}>중복확인</Dupchk>
+              {originNickname !== nickname ? (
+                <Dupchk onClick={checkNickDup}>중복확인</Dupchk>
+              ) : (
+                <></>
+              )}
               {!nickValidFlag ? <Guide>{NICK_NOT_VALID}</Guide> : <></>}
             </Row>
             <Row>
@@ -234,7 +239,6 @@ const Hostpage = () => {
                 type="file"
                 accept={IMG_TYPES.join(", ")}
                 onChange={onUploadProfileImg}
-                required
               />
             </Row>
 
@@ -253,9 +257,9 @@ const Hostpage = () => {
                 취소
               </Button>
             </div>
-            <div className="deleteAccount">
+            {/* <div className="deleteAccount">
               <span onClick={onDeleteAccount}>회원탈퇴</span>
-            </div>
+            </div> */}
           </ProfileEditForm>
         ) : (
           <p>호스트정보를 찾을 수 없습니다.</p>

@@ -99,6 +99,7 @@ const CompTelInput = ({
           value={telNum}
           onChange={telNumHandler}
           onBlur={setTelValidFlag}
+          placeholder="-제외하고 입력해주세요"
         />
         {telValidFlag && telNum !== "" ? (
           <TelNumchk onClick={getCertifiNum}>인증번호발송</TelNumchk>

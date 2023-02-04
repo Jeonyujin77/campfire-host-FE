@@ -56,32 +56,14 @@ const Signup = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      /* console.log("------------------------------");
-      console.log("emailDupFlag: ", emailDupFlag);
-      console.log("nickDupFlag", nickDupFlag);
-      console.log("pwValidFlag", pwValidFlag);
-      console.log("pwChkValidFlag", pwChkValidFlag);
-      console.log("compNumChkFlag", compNumChkFlag);
-      console.log("certifiStatus", certifiStatus);
-      console.log("email", email);
-      console.log("nickname", nickname);
-      console.log("password", password);
-      console.log("brandName", brandName);
-      console.log("compNum", compNum);
-      console.log("telNum", telNum); */
-
-      // 인증번호 미확인 시
-      if (!certifiStatus) {
-        alert("인증번호 확인을 해주세요.");
-        return;
-      }
       // 입력값 검증 및 중복확인이 정상이면
       if (
         pwValidFlag &&
         pwChkValidFlag &&
         emailDupFlag &&
         nickDupFlag &&
-        compNumChkFlag
+        compNumChkFlag &&
+        certifiStatus
       ) {
         const hostInfo = {
           email,
@@ -100,8 +82,20 @@ const Signup = () => {
             alert(`${payload.response.data.errorMessage}`);
           }
         });
-      } else {
-        alert("중복확인 및 사업자번호확인, 입력 형식을 확인해주세요.");
+      } else if (!emailDupFlag) {
+        alert("이메일 중복확인을 해주세요.");
+        return;
+      } else if (!nickDupFlag) {
+        alert("닉네임 중복확인을 해주세요.");
+        return;
+      } else if (!compNumChkFlag) {
+        alert("사업자확인을 해주세요.");
+        return;
+      } else if (!pwChkValidFlag) {
+        alert("비밀번호 재확인을 확인해주세요.");
+        return;
+      } else if (!certifiStatus) {
+        alert("인증번호 확인을 해주세요.");
         return;
       }
 
@@ -166,7 +160,11 @@ const Signup = () => {
             onChange={passwordCheckHandler}
             onBlur={onBlurPasswordCheck}
           />
-          {!pwChkValidFlag ? <Guide>{PWCHK_NOT_VALID}</Guide> : <></>}
+          {passwordCheck !== "" && !pwChkValidFlag ? (
+            <Guide>{PWCHK_NOT_VALID}</Guide>
+          ) : (
+            <></>
+          )}
         </FormGrp>
         <CompNumInput
           compNum={compNum}
