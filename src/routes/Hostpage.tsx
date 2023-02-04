@@ -41,7 +41,7 @@ const Hostpage = () => {
   // 페이지 로드 시 호스트 정보 조회
   useEffect(() => {
     hostId !== null
-      ? dispatch(__getHostInfo(hostId)).then((res) => {
+      ? dispatch(__getHostInfo()).then((res) => {
           const { type, payload } = res;
           if (type === "getHostInfo/fulfilled") {
             const { hostId, hostName, email, phoneNumber, profileImg } =
@@ -130,10 +130,9 @@ const Hostpage = () => {
       const formData = new FormData();
       //formData 형식으로 보냄
       formData.append("hostName", nickname);
-      formData.append("phoneNumber", phoneNumber);
       formData.append("profileImg", profile);
 
-      dispatch(__modifyHostInfo({ hostId, formData })).then((res) => {
+      dispatch(__modifyHostInfo({ formData })).then((res) => {
         const { type, payload } = res;
         // 등록 성공
         if (type === "modifyHostInfo/fulfilled") {
@@ -173,7 +172,7 @@ const Hostpage = () => {
     }
 
     if (window.confirm("회원탈퇴를 하시겠습니까?")) {
-      dispatch(__deleteAccount({ hostId, password })).then((res) => {
+      dispatch(__deleteAccount({ password })).then((res) => {
         const { type, payload } = res;
 
         // 등록 성공
@@ -211,7 +210,7 @@ const Hostpage = () => {
                 onChange={nicknameHandler}
                 onBlur={nickFlagHandler}
               />
-              {originNickname !== nickname ? (
+              {originNickname !== nickname && nickValidFlag ? (
                 <Dupchk onClick={checkNickDup}>중복확인</Dupchk>
               ) : (
                 <></>

@@ -160,9 +160,9 @@ export const __signin = createAsyncThunk(
 // 호스트 정보 조회
 export const __getHostInfo = createAsyncThunk(
   "getHostInfo",
-  async (payload: number, thunkAPI) => {
+  async (payload, thunkAPI) => {
     try {
-      const response = await api.get(`api/hosts/${payload}`);
+      const response = await api.get(`api/hosts`);
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
@@ -176,10 +176,10 @@ export const __getHostInfo = createAsyncThunk(
 export const __modifyHostInfo = createAsyncThunk(
   "modifyHostInfo",
   async (payload: HostModifyInfo, thunkAPI) => {
-    const { hostId, formData } = payload;
+    const { formData } = payload;
 
     try {
-      const response = await api.put(`api/hosts/${hostId}`, formData, {
+      const response = await api.put(`api/hosts`, formData, {
         headers: {
           "content-type": "multipart/form-data;",
           accept: "multipart/form-data,",
@@ -200,10 +200,10 @@ export const __modifyHostInfo = createAsyncThunk(
 export const __deleteAccount = createAsyncThunk(
   "deleteAccount",
   async (payload: DeleteHostAccount, thunkAPI) => {
-    const { hostId, password } = payload;
+    const { password } = payload;
 
     try {
-      const response = await api.delete(`api/hosts/${hostId}`, {
+      const response = await api.delete(`api/hosts`, {
         data: { password },
       });
       if (response.status === 200) {

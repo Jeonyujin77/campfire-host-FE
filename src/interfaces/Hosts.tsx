@@ -32,11 +32,11 @@ export interface HostFullInfo {
 // 호스트 정보 수정
 export interface HostModifyInfo {
   formData: FormData;
-  hostId: number;
+  // hostId: number;
 }
 
 // 회원탈퇴
 export interface DeleteHostAccount {
-  hostId: number;
+  // hostId: number;
   password: string;
 }
