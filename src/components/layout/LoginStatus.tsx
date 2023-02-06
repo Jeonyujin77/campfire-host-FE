@@ -55,7 +55,7 @@ const LoginSts = styled.div`
   font-size: 14px;
 
   span {
-    display: inline-block;
+    display: block;
     margin: 10px 0;
   }
   .nickname {
@@ -63,7 +63,7 @@ const LoginSts = styled.div`
     font-weight: bold;
   }
   .profile {
-    display: inline-block;
+    display: block;
     width: 50px;
     height: 50px;
     border-radius: 50%;

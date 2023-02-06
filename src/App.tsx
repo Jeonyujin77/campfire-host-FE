@@ -12,6 +12,8 @@ import SiteDetail from "./routes/SiteDetail";
 import KeywordManage from "./routes/KeywordManage";
 import CampKeywordMng from "./components/keywords/CampKeywordMng";
 import useAnalytics from "./hooks/useAnalytics";
+import FindHostsId from "./components/hosts/FindHostsId";
+import ModifyHostsPw from "./components/hosts/ModifyHostsPw";
 
 function App() {
   useAnalytics();
@@ -34,6 +36,8 @@ function App() {
       <Route path="/hostpage" element={<Hostpage />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/signin" element={<Signin />} />
+      <Route path="/findId" element={<FindHostsId />} />
+      <Route path="/changePw" element={<ModifyHostsPw />} />
     </Routes>
   );
 }

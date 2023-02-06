@@ -122,7 +122,7 @@ const CompTelInput = ({
               <img src={greenChecked} alt="체크" />
             </InputBtn>
           ) : (
-            <TelNumchk onClick={certifiTest}>인증번호 확인</TelNumchk>
+            <TelNumchk onClick={certifiTest}>인증번호확인</TelNumchk>
           )}
         </FormGrp>
       ) : (

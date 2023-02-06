@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   CompanyCheck,
   DeleteHostAccount,
+  FindHostEmailorPw,
   HostInfo,
   HostLogin,
   HostModifyInfo,
@@ -161,7 +162,7 @@ export const __getHostInfo = createAsyncThunk(
   "getHostInfo",
   async (payload, thunkAPI) => {
     try {
-      const response = await api.get(`api/hosts`);
+      const response = await api.get(`/api/hosts`);
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
@@ -178,7 +179,7 @@ export const __modifyHostInfo = createAsyncThunk(
     const { formData } = payload;
 
     try {
-      const response = await api.put(`api/hosts`, formData, {
+      const response = await api.put(`/api/hosts`, formData, {
         headers: {
           "content-type": "multipart/form-data;",
           accept: "multipart/form-data,",
@@ -202,10 +203,50 @@ export const __deleteAccount = createAsyncThunk(
     const { password } = payload;
 
     try {
-      const response = await api.delete(`api/hosts`, {
+      const response = await api.delete(`/api/hosts`, {
         data: { password },
       });
       if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 호스트 이메일 찾기
+export const __findHostsEmail = createAsyncThunk(
+  "findHostsEmail",
+  async (payload: string, thunkAPI) => {
+    try {
+      const response = await api.get(
+        `/api/hosts/find/hostEmail?phoneNumber=${payload}`
+      );
+
+      if (response.status === 200) {
+        return thunkAPI.fulfillWithValue(response.data);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 호스트 비밀번호 변경
+export const __modifyHostsPw = createAsyncThunk(
+  "modifyHostsPw",
+  async (payload: FindHostEmailorPw, thunkAPI) => {
+    try {
+      const { phoneNumber, email, password } = payload;
+
+      const response = await api.put("/api/hosts/update/hostPW", {
+        phoneNumber,
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
         return thunkAPI.fulfillWithValue(response.data);
       }
     } catch (error) {

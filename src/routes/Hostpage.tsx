@@ -179,7 +179,7 @@ const Hostpage = () => {
         if (type === "deleteAccount/fulfilled") {
           alert(`${payload.message}`);
           localStorage.clear();
-          window.location.href = "/signup";
+          window.location.href = "/";
         } // 에러처리
         else if (type === "deleteAccount/rejected") {
           alert(`${payload.response.data.errorMessage}`);
@@ -256,9 +256,9 @@ const Hostpage = () => {
                 취소
               </Button>
             </div>
-            {/* <div className="deleteAccount">
+            <div className="deleteAccount">
               <span onClick={onDeleteAccount}>회원탈퇴</span>
-            </div> */}
+            </div>
           </ProfileEditForm>
         ) : (
           <p>호스트정보를 찾을 수 없습니다.</p>

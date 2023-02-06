@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "@emotion/styled";
 import { Button, Paper } from "@mui/material";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { __signin } from "../apis/hostApi";
 import Input from "../components/common/Input";
 import useInput from "../hooks/useInput";
 import { useAppDispatch } from "../redux/store";
 import ReactGa from "react-ga";
+import FindHostsId from "../components/hosts/FindHostsId";
 
 const Signin = () => {
   const dispatch = useAppDispatch();
@@ -37,30 +38,7 @@ const Signin = () => {
 
   return (
     <SigninWrapper>
-      <SigninHeader>Camp-Fire</SigninHeader>
-      <div style={{ lineHeight: 1.4 }}>
-        <p>📣 CampFire 호스트 서비스 이용 방법 📣</p>
-        <p>
-          <br />
-          현재 사업자 확인을 하지 않으면 회원가입이 불가능합니다. 따라서 호스트
-          서비스에서도 많은 분들의 피드백을 받기 위해 런칭 기간 동안 호스트
-          서비스를 이용하실 수 있도록 방법을 고안했습니다.
-        </p>
-        <p>
-          <br />
-          런칭 기간 동안 해당 호스트로 로그인 부탁드립니다. <br />
-          - 이메일 : hjs7590@naver.com <br />- 비밀번호 : 1234qwer
-        </p>
-        <p>
-          <br />
-          👍해당 호스트는 테스트용으로 자유롭게 기능들 이용해보실 수 있습니다.
-        </p>
-        <p>
-          다만 많은 유저들이 사용하는 공간이오니 부적절한 언어 및 표현은
-          삼가해주시기 바랍니다.
-        </p>
-        <br />
-      </div>
+      <SigninHeader>Campfire</SigninHeader>
       <Paper style={{ padding: "20px 0" }}>
         <SigninForm onSubmit={onSubmit}>
           <FormGrp>
@@ -86,9 +64,14 @@ const Signin = () => {
           <Button variant="contained" type="submit" className="signinBtn">
             로그인
           </Button>
-          <GoToJoin>
+          <GoToLink>
+            <Link to="/findId">아이디찾기</Link>
+            &nbsp;&nbsp;또는&nbsp;&nbsp;
+            <Link to="/changePw">비밀번호변경</Link>
+          </GoToLink>
+          <GoToLink>
             아직 회원이 아니시라면? <Link to="/signup">회원가입하기</Link>
-          </GoToJoin>
+          </GoToLink>
         </SigninForm>
       </Paper>
     </SigninWrapper>
@@ -128,10 +111,12 @@ const FormGrp = styled.div`
   }
 `;
 
-const GoToJoin = styled.p`
-  padding: 20px 0;
+const GoToLink = styled.p`
+  margin: 10px 0;
+  line-height: 1.5;
   font-size: 14px;
-  a {
+  a,
+  span {
     color: #ff7a50;
     font-weight: bold;
   }

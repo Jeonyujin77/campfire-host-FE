@@ -124,7 +124,7 @@ const Signup = () => {
 
   return (
     <SignupWrapper>
-      <SignupHeader>Camp-Fire</SignupHeader>
+      <SignupHeader>Campfire</SignupHeader>
       <SignupForm onSubmit={onSubmit}>
         <EmailInput
           email={email}
