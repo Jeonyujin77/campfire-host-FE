@@ -12,7 +12,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <Router>
-      <Header />
+      {localStorage.getItem("accessToken") &&
+      localStorage.getItem("refreshToken") ? (
+        <Header />
+      ) : (
+        <></>
+      )}
+
       <App />
     </Router>
   </Provider>
