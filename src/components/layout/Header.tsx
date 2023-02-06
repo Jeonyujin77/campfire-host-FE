@@ -1,27 +1,15 @@
-import { memo } from "react";
 import styled from "@emotion/styled";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
-import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import LoginStatus from "./LoginStatus";
 
 const Header = () => {
-  // 로그아웃
-  const logout = () => {
-    localStorage.clear();
-    window.location.href = "/signin";
-  };
-
   return (
     <HeaderWrapper>
-      <h1>Camp-Fire</h1>
-      <LoginStatus>
-        <span>호스트님이 로그인 중입니다.</span>
-        <Button size="small" className="logout" onClick={logout}>
-          로그아웃
-        </Button>
-      </LoginStatus>
+      <h1>Campfire</h1>
+      <LoginStatus />
       <MenuList>
         <MenuItem>
           <ListItemText>
@@ -77,13 +65,4 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const LoginStatus = styled.div`
-  padding: 20px 20px 40px 20px;
-  font-size: 13px;
-
-  .logout {
-    padding-left: 10px;
-    color: tomato;
-  }
-`;
-export default memo(Header);
+export default Header;

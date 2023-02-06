@@ -108,7 +108,6 @@ export const __signup = createAsyncThunk(
         phoneNumber,
       } = payload;
 
-      console.log(payload);
       const response = await api.post("/api/hosts/signup", {
         email,
         hostName,
