@@ -13,7 +13,6 @@ import { IMG_TYPES, MODAL_STYLE } from "../../constant/camps";
 import useInput from "../../hooks/useInput";
 import {
   campGeocoder,
-  convertURLtoFile,
   handleComplete,
   onUploadImage,
   onUploadMultipleImage,
@@ -22,6 +21,7 @@ import { useAppDispatch } from "../../redux/store";
 import { __modifyCampsInfo } from "../../apis/campApi";
 import CheckAuth from "../common/CheckAuth";
 import ReactGa from "react-ga";
+import { useNavigate } from "react-router-dom";
 
 const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   // --------------------------------이미지파일업로드---------------------------------------------------
@@ -34,6 +34,7 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   >([]); // 추가사진 미리보기
   // --------------------------------캠핑장기본정보---------------------------------------------------
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [campName, setCampName, campNameHandler] = useInput(campInfo.campName); // 업체명
   const [campAddress, setCampAddress] = useState(campInfo.campAddress); // 주소
   const [campMainImage, setCampMainImage] = useState<string | Blob | File>(
@@ -95,18 +96,21 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
   }, []);
 
   const appendConvertedFile = async () => {
-    if (typeof campMainImage === "string") {
-      const file = await convertURLtoFile(campMainImage);
-      formData.append("campMainImage", file);
-    } else {
+    // 메인 이미지 변경 시
+    if (typeof campMainImage !== "string") {
       formData.append("campMainImage", campMainImage);
     }
 
-    for (let i = 0; i < campSubImages.length; i++) {
-      if (typeof campSubImages[i] === "string") {
-        const file = await convertURLtoFile(campSubImages[i]);
-        formData.append(`campSubImages`, file, `campSubImages${i}`);
-      } else {
+    // 서브 이미지 변경 X => 백엔드에서 서브이미지 변경이 없을 시 string으로 넘기도록 요청
+    if (typeof campSubImages[0] === "string") {
+      formData.append(
+        `campSubImages`,
+        JSON.stringify(campSubImages).replace(/[\[\]\"]/g, "")
+      );
+    }
+    // 서브 이미지 변경 O
+    else {
+      for (let i = 0; i < campSubImages.length; i++) {
         formData.append(`campSubImages`, campSubImages[i], `campSubImages${i}`);
       }
     }
@@ -139,7 +143,7 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
           // 등록 성공
           if (type === "modifyCampsInfo/fulfilled") {
             alert(`${payload.message}`);
-            window.location.reload();
+            navigate(0);
           }
           // 에러처리
           else if (type === "modifyCampsInfo/rejected") {
@@ -206,23 +210,15 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
         <Row>
           <Label htmlFor="campMainImage">대표사진</Label>
           <Data>
-            {
-              campMainImgPrev !== "" ? (
-                <img
-                  src={campMainImgPrev?.toString()}
-                  alt="대표사진 미리보기"
-                />
-              ) : (
-                <></>
-              )
-              /*(
-            <img
-              src={campInfo.campMainImage}
-              alt="대표사진"
-              defaultValue={campInfo.campMainImage}
-            />
-          )*/
-            }
+            {campMainImgPrev !== "" ? (
+              <img src={campMainImgPrev?.toString()} alt="대표사진 미리보기" />
+            ) : (
+              <img
+                src={campInfo.campMainImage}
+                alt="대표사진"
+                defaultValue={campInfo.campMainImage}
+              />
+            )}
           </Data>
           <Input
             width="300px"
@@ -230,27 +226,22 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             id="campMainImage"
             accept={IMG_TYPES.join(", ")}
             onChange={onUploadCampMainImg}
-            required
           />
         </Row>
         <Row>
           <Label htmlFor="campSubImages">추가사진</Label>
           <Data>
-            {
-              campSubImgPrevs.length !== 0 ? (
-                campSubImgPrevs.map((img, idx) => (
+            {campSubImgPrevs.length !== 0
+              ? campSubImgPrevs.map((img, idx) => (
                   <img
                     src={img?.toString()}
                     alt="추가사진"
                     key={`${img} ${idx}`}
                   />
                 ))
-              ) : (
-                <></>
-              ) /*campInfo.campSubImages.map((img, idx) => (
-                <img src={img} alt="추가사진" key={`${img} ${idx}`} />
-            ))*/
-            }
+              : campInfo.campSubImages.map((img, idx) => (
+                  <img src={img} alt="추가사진" key={`${img} ${idx}`} />
+                ))}
           </Data>
           <Input
             width="300px"
@@ -259,7 +250,6 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             multiple
             accept={IMG_TYPES.join(", ")}
             onChange={onUploadCampSubImgs}
-            required
           />
         </Row>
         <Row>
@@ -318,7 +308,7 @@ const ModifyBasicInfo = ({ campInfo }: { campInfo: CampInfoProps }) => {
             variant="outlined"
             type="submit"
             className="submitBtn"
-            onClick={() => window.location.reload()}
+            onClick={() => navigate(0)}
           >
             취소
           </Button>

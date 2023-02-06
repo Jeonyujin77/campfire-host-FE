@@ -23,7 +23,7 @@ const Signin = () => {
           alert("로그인에 성공하였습니다.");
           window.location.href = "/";
         } else if (type === "signin/rejected") {
-          alert(`${payload.response.data.errorMessage}`);
+          alert(`${payload.response?.data.errorMessage}`);
         }
       });
 

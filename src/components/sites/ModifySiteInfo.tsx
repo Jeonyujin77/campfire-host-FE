@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import ReactGa from "react-ga";
 
 const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
+  const formData = new FormData();
   // --------------------------------이미지파일업로드---------------------------------------------------
   const [siteMainImgPrev, setSiteMainImgPrev] = useState<
     string | ArrayBuffer | null
@@ -42,9 +43,11 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
   const [roomCount, setRoomCount, roomCountHandler] = useInput(
     siteInfo.roomCount
   ); // 일별이용가능객실수
-  const [siteMainImage, setSiteMainImage] = useState<string | Blob | File>(""); // 업체대표사진
+  const [siteMainImage, setSiteMainImage] = useState<string | Blob | File>(
+    siteInfo.siteMainImage
+  ); // 업체대표사진
   const [siteSubImages, setSiteSubImages] = useState<(string | Blob | File)[]>(
-    []
+    siteInfo.siteSubImages
   ); // 업체추가사진
 
   // 대표 사진 업로드
@@ -71,22 +74,38 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
     []
   );
 
-  // 사이트정보 수정
-  const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const formData = new FormData();
-      const campId = siteInfo.campId;
-      const siteId = siteInfo.siteId;
+  const appendConvertedFile = async () => {
+    // 메인 이미지 변경 시
+    if (typeof siteMainImage !== "string") {
+      formData.append("siteMainImage", siteMainImage);
+    }
 
+    // 서브 이미지 변경 X => 백엔드에서 서브이미지 변경이 없을 시 string으로 넘기도록 요청
+    if (typeof siteSubImages[0] === "string") {
+      formData.append(
+        `siteSubImages`,
+        JSON.stringify(siteSubImages).replace(/[\[\]\"]/g, "")
+      );
+    }
+    // 서브 이미지 변경 O
+    else {
+      for (let i = 0; i < siteSubImages.length; i++) {
+        formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
+      }
+    }
+  };
+
+  // 사이트정보 수정
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const campId = siteInfo.campId;
+    const siteId = siteInfo.siteId;
+
+    appendConvertedFile().then(() => {
       formData.append("siteName", siteName);
       formData.append("siteDesc", siteDesc);
       formData.append("siteInfo", siteInform);
       formData.append("sitePrice", sitePrice);
-      formData.append("siteMainImage", siteMainImage);
-      for (let i = 0; i < siteSubImages.length; i++) {
-        formData.append(`siteSubImages`, siteSubImages[i], `siteSubImages${i}`);
-      }
       formData.append("minPeople", minPeople);
       formData.append("maxPeople", maxPeople);
       formData.append("roomCount", roomCount);
@@ -103,28 +122,13 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
           alert(`${payload.response.data.errorMessage}`);
         }
       });
+    });
 
-      ReactGa.event({
-        category: "사이트관리-사이트수정",
-        action: "캠핑장사이트수정 시도",
-      });
-    },
-    [
-      dispatch,
-      navigate,
-      maxPeople,
-      minPeople,
-      roomCount,
-      siteDesc,
-      siteInfo.campId,
-      siteInfo.siteId,
-      siteInform,
-      siteMainImage,
-      siteName,
-      sitePrice,
-      siteSubImages,
-    ]
-  );
+    ReactGa.event({
+      category: "사이트관리-사이트수정",
+      action: "캠핑장사이트수정 시도",
+    });
+  };
 
   return (
     <>
@@ -193,7 +197,11 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             {siteMainImgPrev !== "" ? (
               <img src={siteMainImgPrev?.toString()} alt="대표사진 미리보기" />
             ) : (
-              <></>
+              <img
+                src={siteInfo.siteMainImage}
+                alt="대표사진"
+                defaultValue={siteInfo.siteMainImage}
+              />
             )}
           </Data>
           <Input
@@ -201,23 +209,22 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             type="file"
             accept={IMG_TYPES.join(", ")}
             onChange={onUploadSiteMainImg}
-            required
           />
         </Row>
         <Row>
           <Label>추가사진</Label>
           <Data>
-            {siteSubImgPrevs.length !== 0 ? (
-              siteSubImgPrevs.map((img, idx) => (
-                <img
-                  src={img?.toString()}
-                  alt="추가사진"
-                  key={`${img} ${idx}`}
-                />
-              ))
-            ) : (
-              <></>
-            )}
+            {siteSubImgPrevs.length !== 0
+              ? siteSubImgPrevs.map((img, idx) => (
+                  <img
+                    src={img?.toString()}
+                    alt="추가사진"
+                    key={`${img} ${idx}`}
+                  />
+                ))
+              : siteInfo.siteSubImages.map((img, idx) => (
+                  <img src={img} alt="추가사진" key={`${img} ${idx}`} />
+                ))}
           </Data>
           <Input
             width="300px"
@@ -225,7 +232,6 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             multiple
             accept={IMG_TYPES.join(", ")}
             onChange={onUploadSiteSubImgs}
-            required
           />
         </Row>
         <Row>
@@ -273,7 +279,7 @@ const ModifySiteInfo = ({ siteInfo }: { siteInfo: SiteInfoProps }) => {
             variant="outlined"
             type="submit"
             className="submitBtn"
-            onClick={() => window.location.reload()}
+            onClick={() => navigate(0)}
           >
             취소
           </Button>
