@@ -6,7 +6,7 @@ export const __getUserInfo = createAsyncThunk(
   "getUserInfo",
   async (payload: number, thunkAPI) => {
     try {
-      const response = await api.get(`api/users/${payload}`);
+      const response = await api.get(`/api/users/${payload}`);
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);
       }
