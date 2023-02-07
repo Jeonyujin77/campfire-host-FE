@@ -8,6 +8,8 @@ import { telValid } from "../../utils/RegExp";
 import Input from "../common/Input";
 import greenChecked from "../../asset/greenChecked.png";
 import ReactGa from "react-ga";
+import { useNavigate } from "react-router-dom";
+import Timer from "../common/Timer";
 
 const CompTelInput = ({
   telNum,
@@ -21,15 +23,20 @@ const CompTelInput = ({
   setCertifiStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [telValidFlag, setTelValidFlag] = useInputValid(telNum, telValid); // 전화번호검증 flag
   const [certifiNum, setCertifiNum] = useState(""); // 인증번호
   const [getCertifiStatus, setGetCertifiStatus] = useState(false); //인증번호 받아오기 상태
+  const [minutes, setMinutes] = useState(0); //인증번호 타이머 상태-분
+  const [seconds, setSeconds] = useState(0); //인증번호 타이머 상태-초
 
   // 전화번호 변경 시
   const telNumHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setTelNum(e.target.value);
+      setGetCertifiStatus(false);
       setCertifiStatus(false);
+      setCertifiNum("");
     },
     []
   );
@@ -45,10 +52,16 @@ const CompTelInput = ({
     dispatch(__getCertifiNum(telNum)).then((res) => {
       const { type, payload } = res;
       if (type === "getCertifiNum/fulfilled") {
-        alert("인증번호가 발송되었습니다.");
+        setMinutes(2);
+        setSeconds(59);
+        alert("해당 번호로 인증번호가 발송되었습니다.");
         setGetCertifiStatus(true);
       } else if (type === "getCertifiNum/rejected") {
         alert(`${payload.response.data.errorMessage}`);
+        if (payload.response.data.errorMessage === "요청횟수 초과되었습니다.") {
+          alert("비정상적인 접근으로 2시간동안 인증번호 발송이 제한됩니다.");
+          navigate("/");
+        }
       }
     });
 
@@ -101,14 +114,14 @@ const CompTelInput = ({
           onBlur={setTelValidFlag}
           placeholder="-제외하고 입력해주세요"
         />
-        {telValidFlag && telNum !== "" ? (
+        {telValidFlag && telNum !== "" && !certifiStatus ? (
           <TelNumchk onClick={getCertifiNum}>인증번호발송</TelNumchk>
         ) : (
-          <TelNumchkDisabled>인증번호발송</TelNumchkDisabled>
+          <></>
         )}
         {!telValidFlag ? <Guide>{TELNUM_NOT_VALID}</Guide> : <></>}
       </FormGrp>
-      {getCertifiStatus ? (
+      {getCertifiStatus && minutes !== 0 ? (
         <FormGrp>
           <label>인증번호</label>
           <Input
@@ -122,9 +135,21 @@ const CompTelInput = ({
               <img src={greenChecked} alt="체크" />
             </InputBtn>
           ) : (
-            <TelNumchk onClick={certifiTest}>인증번호확인</TelNumchk>
+            <>
+              <TelNumchk onClick={certifiTest}>인증번호확인</TelNumchk>
+            </>
           )}
         </FormGrp>
+      ) : (
+        <></>
+      )}
+      {getCertifiStatus && !certifiStatus ? (
+        <Timer
+          minutes={minutes}
+          seconds={seconds}
+          setMinutes={setMinutes}
+          setSeconds={setSeconds}
+        />
       ) : (
         <></>
       )}
@@ -155,17 +180,6 @@ const TelNumchk = styled.span`
   height: 32px;
   cursor: pointer;
   color: tomato;
-  font-size: 14px;
-  margin-left: 10px;
-  vertical-align: middle;
-  line-height: 32px;
-`;
-
-const TelNumchkDisabled = styled(TelNumchk)`
-  display: inline-block;
-  cursor: unset;
-  height: 32px;
-  color: grey;
   font-size: 14px;
   margin-left: 10px;
   vertical-align: middle;
